@@ -16,3 +16,7 @@ cpts(m.binseg)
 m.pm=cpt.mean(m.data,penalty="Manual",pen.value="1.5*log(n)",method="PELT")
 plot(m.pm,type="l",cpt.col="blue",xlab="Index",cpt.width=4)
 cpts(m.pm)
+
+#bayesian change point
+library(bcp)
+plot(bcp(m.data))
