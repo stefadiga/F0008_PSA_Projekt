@@ -1,7 +1,3 @@
-N <- 20;
-f <- 0:2;
-for (i in 3:N) f <- c(f, sum(f[i-(0:2)]))
-f
 
 library(changepoint)
 set.seed(10)
@@ -20,3 +16,24 @@ cpts(m.pm)
 #bayesian change point
 library(bcp)
 plot(bcp(m.data))
+
+#structural change
+library(strucchange)
+ocus.n <- efp(m.data ~ 1, type = "OLS-CUSUM")
+plot(ocus.n)
+
+fs.n <- Fstats(m.data ~ 1)
+plot(fs.n)
+
+bp.n <- breakpoints(m.data ~ 1)
+plot(bp.n)
+fm0.n <- lm(m.data ~ 1)
+coef(fm0.n)
+
+n.fac <- breakfactor(bp.n)
+fm1.n <- lm(m.data ~ n.fac - 1)
+coef(fm1.n)
+
+ts.plot(m.data,xlab="Index")
+lines(fitted(fm0.n))
+lines(fitted(fm1.n))
