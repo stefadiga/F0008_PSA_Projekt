@@ -31,6 +31,7 @@ fm0.n <- lm(m.data ~ 1)
 coef(fm0.n)
 c<-2
 
+
 n.fac <- breakfactor(bp.n)
 fm1.n <- lm(m.data ~ n.fac - 1)
 coef(fm1.n)
