@@ -1,4 +1,5 @@
 data=read.table("test.txt") 
+
 lcases= log(data[,2])
 data=cbind(data,lcases)
 colnames(data)=c("income","cases","CrCards","lcases")
