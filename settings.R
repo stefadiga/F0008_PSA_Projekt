@@ -4,6 +4,7 @@ library(doBy)
 library(sqldf)
 library(xtable)
 library(dplyr)
+library(plyr)
 library(ggplot2)
 library(lattice)
 
@@ -25,8 +26,10 @@ data$arzt_region_code[data$arzt_region_code=="\\N"] <-""
 data$practice_type[data$practice_type==''] <- ""
 
 #adding sum of measurement by patient
-n_psa_id<-data.frame(pat_id=unique(data$pat_id), n_psa=tapply(data$psa_n, data$pat_id, sum), n_arzt=tapply(data$arzt_id, data$pat_id, n_distinct), n_py=tapply(data$py, data$pat_id, sum), fr=tapply(data$psa_n, data$pat_id, sum)/tapply(data$py, data$pat_id, sum))
-data<-merge(data, n_psa_id)
+n_psa_id<-data.frame(pat_id=unique(data$pat_id), n_psa=tapply(data$psa_n, data$pat_id, sum), n_arzt=tapply(data$arzt_id, data$pat_id, n_distinct), n_py=tapply(data$py, data$pat_id, sum), 
+                     age_m=tapply(data$age, data$pat_id, mean), fr=tapply(data$psa_n, data$pat_id, sum)/tapply(data$py, data$pat_id, sum))
+#db by patient
+n_psa_id<-join(n_psa_id, data, match ="first")
 
 #Data Frame with sum of measurement by start_dt
 n_psa_start_dt_s<-data.frame(start_dt=unique(data$start_dt), n_psa_start_dt=tapply(data$psa_n, data$start_dt, sum), ir=tapply(data$psa_n, data$start_dt, sum)/tapply(data$py, data$start_dt, sum))
