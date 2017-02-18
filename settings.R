@@ -3,8 +3,8 @@
 library(doBy)
 library(sqldf)
 library(xtable)
-library(dplyr)
 library(plyr)
+library(dplyr)
 library(ggplot2)
 library(lattice)
 
@@ -18,16 +18,29 @@ data=read.csv("f0008_psa_2_studyend.csv")
 data<-orderBy(~pat_id+start_dt, data)
 
 
-data$psa_value<-as.numeric(as.character(data$psa_value))
+#data cleaning for missing
+data$arzt_region<-as.character(data$arzt_region)
+data$arzt_region[data$arzt_region=="\\N"] <-""
+
+data$arzt_region_code<-as.character(data$arzt_region_code)
+data$arzt_region_code[data$arzt_region_code=="\\N"] <-""
+
+data$practice_type[data$practice_type==''] <- ""
+
+data$arzt_doby<-as.character(data$arzt_doby)
+data$arzt_doby[data$arzt_doby=="\\N"] <-""
 data$arzt_doby<-as.numeric(as.character(data$arzt_doby))
 
-data$arzt_region[data$arzt_region=="\\N"] <-""
-data$arzt_region_code[data$arzt_region_code=="\\N"] <-""
-data$practice_type[data$practice_type==''] <- ""
+data$psa_value<-as.character(data$psa_value)
+data$psa_value[data$psa_value=="\\N"] <-""
+data$psa_value<-as.numeric(as.character(data$psa_value))
+
+data$employ_status<-as.character(data$employ_status)
+data$employ_status[data$employ_status=="Selbständig "]<-"Selbständig"
 
 #adding sum of measurement by patient
 n_psa_id<-data.frame(pat_id=unique(data$pat_id), n_psa=tapply(data$psa_n, data$pat_id, sum), n_arzt=tapply(data$arzt_id, data$pat_id, n_distinct), n_py=tapply(data$py, data$pat_id, sum), 
-                     age_m=tapply(data$age, data$pat_id, mean), fr=tapply(data$psa_n, data$pat_id, sum)/tapply(data$py, data$pat_id, sum))
+                     age_m=tapply(data$age, data$pat_id, mean), psa_mean=tapply(data$psa_value, data$pat_id, mean, na.rm=TRUE), fr=tapply(data$psa_n, data$pat_id, sum)/tapply(data$py, data$pat_id, sum))
 #db by patient
 n_psa_id<-join(n_psa_id, data, match ="first")
 

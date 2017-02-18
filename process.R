@@ -44,6 +44,8 @@ table(employ_status, exclude= "")
 n_psa_id$fr_c<-cut(n_psa_id$fr, c(0,0.1, 0.15,0.25,0.3,0.5,1, 5), right=FALSE)
 n_psa_id$c_age_m <- cut(n_psa_id$age_m, c(55,57,60,65,70,76), right=FALSE)
 n_psa_id$c_age_dum <- as.numeric(n_psa_id$age_m>=62)
+n_psa_id$c_doby <- cut(n_psa_id$arzt_doby, c(1945,1955,1965,1990), right=FALSE, dig.lab=4)
+
 table(n_psa_id$fr_c)
 table(n_psa_id$c_age_m)
 ftable(xtabs(~n_psa_id$fr_c+ n_psa_id$c_age_dum))
@@ -54,7 +56,11 @@ chisq.test(xtabs(~n_psa_id$fr_c+ n_psa_id$practice_type, exclude=""))
 ftable(xtabs(~n_psa_id$fr_c+ n_psa_id$arzt_sex))
 chisq.test(xtabs(~n_psa_id$fr_c+ n_psa_id$arzt_sex))
 ftable(xtabs(~n_psa_id$fr_c+ n_psa_id$employ_status))
-#to review categories
+ftable(xtabs(~n_psa_id$fr_c+ n_psa_id$c_doby))
+chisq.test(xtabs(~n_psa_id$fr_c+ n_psa_id$c_doby))
+
+barplot(xtabs(~n_psa_id$fr_c+ n_psa_id$c_doby))
+
 chisq.test(xtabs(~n_psa_id$fr_c+ n_psa_id$employ_status))
 table(n_psa_id$employ_status)
-
+#mean value of PSA
