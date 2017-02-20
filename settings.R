@@ -52,17 +52,31 @@ n_psa_start_dt_s<-data.frame(start_dt=unique(data$start_dt), n_psa_start_dt=tapp
 data1=read.csv("f0008_psa_1_observed.csv") 
 data1<-orderBy(~pat_id+start_dt, data1)
 
-
-data1$psa_value<-as.numeric(as.character(data1$psa_value))
-data1$arzt_doby<-as.numeric(as.character(data1$arzt_doby))
-
+#data cleaning for missing
+data1$arzt_region<-as.character(data1$arzt_region)
 data1$arzt_region[data1$arzt_region=="\\N"] <-""
+
+data1$arzt_region_code<-as.character(data1$arzt_region_code)
 data1$arzt_region_code[data1$arzt_region_code=="\\N"] <-""
+
 data1$practice_type[data1$practice_type==''] <- ""
 
+data1$arzt_doby<-as.character(data1$arzt_doby)
+data1$arzt_doby[data1$arzt_doby=="\\N"] <-""
+data1$arzt_doby<-as.numeric(as.character(data1$arzt_doby))
+
+data1$psa_value<-as.character(data1$psa_value)
+data1$psa_value[data1$psa_value=="\\N"] <-""
+data1$psa_value<-as.numeric(as.character(data1$psa_value))
+
+data1$employ_status<-as.character(data1$employ_status)
+data1$employ_status[data1$employ_status=="Selbständig "]<-"Selbständig"
+
 #adding sum of measurement by patient
-n_psa_id1<-data.frame(pat_id=unique(data1$pat_id), n_psa=tapply(data1$psa_n, data1$pat_id, sum), n_arzt=tapply(data1$arzt_id, data1$pat_id, n_distinct), n_py=tapply(data1$py, data1$pat_id, sum), fr=tapply(data1$psa_n, data1$pat_id, sum)/tapply(data1$py, data1$pat_id, sum))
-data1<-merge(data1, n_psa_id)
+n_psa1_id<-data.frame(pat_id=unique(data1$pat_id), n_psa=tapply(data1$psa_n, data1$pat_id, sum), n_arzt=tapply(data1$arzt_id, data1$pat_id, n_distinct), n_py=tapply(data1$py, data1$pat_id, sum), 
+                     age_m=tapply(data1$age, data1$pat_id, mean), psa_mean=tapply(data1$psa_value, data1$pat_id, mean, na.rm=TRUE), fr=tapply(data1$psa_n, data1$pat_id, sum)/tapply(data1$py, data1$pat_id, sum))
+#db by patient
+n_psa1_id<-join(n_psa_id, data1, match ="first")
 
 #Data Frame with sum of measurement by start_dt
 n_psa_start_dt_s1<-data.frame(start_dt=unique(data1$start_dt), n_psa_start_dt=tapply(data1$psa_n, data1$start_dt, sum), ir=tapply(data1$psa_n, data1$start_dt, sum)/tapply(data1$py, data1$start_dt, sum))
