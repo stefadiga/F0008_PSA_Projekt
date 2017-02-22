@@ -1,10 +1,12 @@
 
-
 # ----------------------------------------------------------------
 # Mixed model PSA Value
 # ----------------------------------------------------------------
 
-a001a0_3 <- subset(data, !is.na(data$psa_value) & data$n_psa>=6)
+#to review
+a00<-subset(n_psa_id, n_psa>=6)
+
+a001a0_3 <- subset(data, pat_id %in% a00$pat_id & !is.na(psa_value))
 
 
 xyplot(psa_value~start_dt|as.factor(pat_id), data=a001a0_3,

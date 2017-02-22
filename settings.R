@@ -36,7 +36,22 @@ data$psa_value[data$psa_value=="\\N"] <-""
 data$psa_value<-as.numeric(as.character(data$psa_value))
 
 data$employ_status<-as.character(data$employ_status)
-data$employ_status[data$employ_status=="Selbständig "]<-"Selbständig"
+data$employ_status[data$employ_status=="Selbst?ndig "]<-"Selbst?ndig"
+
+#mortality rate
+mortality=read.csv("f0008_ch_demography.csv") 
+mortality1<-subset(mortality, survey_year==2009 & sex2=="m")
+mortality2<-subset(mortality, survey_year==2010 & sex2=="m")
+mort_2009_m <- reshape(mortality1, direction = "wide", idvar="age_y", timevar="fact2", drop=c("canton", "survey_year", "sex2"))
+mort_2010_m <- reshape(mortality2, direction = "wide", idvar="age_y", timevar="fact2", drop=c("canton", "survey_year", "sex2"))
+mort_2009_m$year<-2009
+mort_2010_m$year<-2010
+mort_0910<-join(mort_2009_m, mort_2010_m, type="full")
+mort_0910$rate<-mort_0910$n.death_cases/mort_0910$n.pop_middle
+mort_0910<-subset(mort_0910, age_y>=50 & age_y <=80)
+#arzt consultation - tutti i pazienti del dottore
+arzt_cons=read.csv("f0008_arzt.csv") 
+
 
 #adding sum of measurement by patient
 n_psa_id<-data.frame(pat_id=unique(data$pat_id), n_psa=tapply(data$psa_n, data$pat_id, sum), n_arzt=tapply(data$arzt_id, data$pat_id, n_distinct), n_py=tapply(data$py, data$pat_id, sum), 
@@ -70,7 +85,7 @@ data1$psa_value[data1$psa_value=="\\N"] <-""
 data1$psa_value<-as.numeric(as.character(data1$psa_value))
 
 data1$employ_status<-as.character(data1$employ_status)
-data1$employ_status[data1$employ_status=="Selbständig "]<-"Selbständig"
+data1$employ_status[data1$employ_status=="Selbst?ndig "]<-"Selbst?ndig"
 
 #adding sum of measurement by patient
 n_psa1_id<-data.frame(pat_id=unique(data1$pat_id), n_psa=tapply(data1$psa_n, data1$pat_id, sum), n_arzt=tapply(data1$arzt_id, data1$pat_id, n_distinct), n_py=tapply(data1$py, data1$pat_id, sum), 
