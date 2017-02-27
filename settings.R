@@ -7,15 +7,21 @@ library(plyr)
 library(dplyr)
 library(ggplot2)
 library(lattice)
-
+library(MASS)
+library(car)
 
 # -- Master tables
 
 #############
 #Study End
-data=read.csv("f0008_psa_2_studyend.csv") 
+#data=read.csv("f0008_psa_2_studyend.csv") 
+data=read.csv("f0008_01_pat.csv") 
+data2=read.csv("f0008_02_psa.csv") 
+data3=read.csv("f0008_03_arzt.csv") 
 
-data<-orderBy(~pat_id+start_dt, data)
+data<-orderBy(~pat_id+study_start_dt, data)
+data2<-orderBy(~pat_id, data2)
+data_all<-merge(data, data2, all=TRUE)
 
 
 #data cleaning for missing
@@ -48,7 +54,26 @@ mort_2009_m$year<-2009
 mort_2010_m$year<-2010
 mort_0910<-join(mort_2009_m, mort_2010_m, type="full")
 mort_0910$rate<-mort_0910$n.death_cases/mort_0910$n.pop_middle
-mort_0910<-subset(mort_0910, age_y>=50 & age_y <=80)
+mort_0910<-subset(mort_0910, age_y>=50 & age_y <=80 & year==2010)
+
+weib<-fitdistr(mort_0910$rate, densfun=dweibull,start=list(scale=1,shape=5))
+
+curve(dweibull(x, scale=weib$estimate[1], shape=weib$estimate[2]),
+ from=50, to=80, add=TRUE)
+
+fm4DNase1 <- nls(rate ~ b* exp(c*age_y),
+                 data=mort_0910,
+                 start = list(b = 0.2, c = 0.1),
+                 algorithm = "port")
+summary(fm4DNase1)
+
+plot(mort_0910$age_y, mort_0910$rate)
+lines(mort_0910$age_y, predict(fm4DNase1), col = 2)
+
+rnos<-runif(100) 
+which(rnos<= 0.1) 
+y2 <- (-log(summary(fm4DNase1)[10]$coefficients[1,1]) + log(runif(1000))) /summary(fm4DNase1)[10]$coefficients[2,1]
+
 #arzt consultation - tutti i pazienti del dottore
 arzt_cons=read.csv("f0008_arzt.csv") 
 
