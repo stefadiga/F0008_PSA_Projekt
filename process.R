@@ -20,21 +20,25 @@ xyplot(psa_value~start_dt|as.factor(pat_id), data=a001a0_3,
 #plot(n_psa_start_dt_s$start_dt,n_psa_start_dt_s$n_psa_start_dt)
 #lines(lowess(n_psa_start_dt_s$start_dt,n_psa_start_dt_s$n_psa_start_dt), col="blue")
 
-# Plot Study End
-qplot(as.Date(n_psa_start_dt_s$start_dt),n_psa_start_dt_s$n_psa_start_dt, geom=c("point", "smooth"),
-      xlab="Start_dt", ylab="Frequency of PSA Test", main="PSA tests: Study end")
-
+# Incidence
+i1<-qplot(as.Date(inc$dt), inc$events/inc$py,  geom=c("point", "smooth"),
+            xlab="Start_dt", ylab="Incidence of PSA Test", main="PSA tests: Observed")
+i2<-qplot(as.Date(inc$dt), inc$events.1/inc$py.1,  geom=c("point", "smooth"),
+          xlab="Start_dt", ylab="Incidence of PSA Test", main="PSA tests: Study End")
+i3<-qplot(as.Date(inc$dt), inc$events.2/inc$py.2,  geom=c("point", "smooth"),
+          xlab="Start_dt", ylab="Incidence of PSA Test", main="PSA tests: Mixed")
+grid.arrange(i1, i2, i3, ncol=2)
 #ggplot(n_psa_start_dt_s, aes(as.Date(n_psa_start_dt_s$start_dt),n_psa_start_dt_s$n_psa_start_dt)) + geom_point() +
 #  geom_smooth(method = 'loess', aes(x=as.Date(n_psa_start_dt_s$start_dt), y=n_psa_start_dt_s$n_psa_start_dt), se = FALSE) 
 
-qplot(as.Date(n_psa_start_dt_s$start_dt),n_psa_start_dt_s$ir, geom=c("point", "smooth"),
+qplot(as.Date(n_psa_start_dt$start_dt_1),n_psa_start_dt$ir1, geom=c("point", "smooth"),
       xlab="Start_dt", ylab="Incidence of PSA Test", main="PSA tests: Study end")
 
 #Plot Observed
-qplot(as.Date(n_psa_start_dt_s1$start_dt),n_psa_start_dt_s1$n_psa_start_dt, geom=c("point", "smooth"),
+qplot(as.Date(n_psa_start_dt$start_dt_3),n_psa_start_dt$n_psa_start_dt_3, geom=c("point", "smooth"),
       xlab="Start_dt", ylab="Frequency of PSA Test", main="PSA tests: Observed")
 
-qplot(as.Date(n_psa_start_dt_s1$start_dt),n_psa_start_dt_s1$ir, geom=c("point", "smooth"),
+qplot(as.Date(n_psa_start_dt$start_dt_3),n_psa_start_dt$ir3, geom=c("point", "smooth"),
       xlab="Start_dt", ylab="Incidence of PSA Test", main="PSA tests: Observed")
 
 #tabular ohne missing
