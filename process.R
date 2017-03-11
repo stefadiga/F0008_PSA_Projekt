@@ -1,5 +1,5 @@
 
-# ----------------------------------------------------------------
+# -----TO DO-----------------------------------------------
 # Mixed model PSA Value
 # ----------------------------------------------------------------
 
@@ -16,11 +16,43 @@ xyplot(psa_value~start_dt|as.factor(pat_id), data=a001a0_3,
 
 
 # -------------------------------
+# Incidence rates
+# ----------------------------------
 
-#plot(n_psa_start_dt_s$start_dt,n_psa_start_dt_s$n_psa_start_dt)
-#lines(lowess(n_psa_start_dt_s$start_dt,n_psa_start_dt_s$n_psa_start_dt), col="blue")
+# v is the indicator vector of first patient's id appearance
+v <- c(1, rep(0, length(data_el$pat_id)-1))
+for (i in 2:length(data_el$pat_id))
+  if ((data_el$pat_id[i] %in% 1:data_el$pat_id[i-1]) == FALSE)
+    v[i] <- 1;
 
-# Incidence
+
+quarter_starts <- seq(from=as.Date("2009-01-01"), to=as.Date("2017-01-01"), by="quarter")
+
+cev <- function(end, start) {
+  
+  py <- rep(0, (length(quarter_starts)-1));
+  events <- rep(0, (length(quarter_starts)-1));
+  
+  for (i in 1:(length(quarter_starts)-1)) {
+    
+    Qstart <- rep(as.character(quarter_starts[i]), length(data_el$pat_id));
+    Qend <- rep(as.character(quarter_starts[i+1]), length(data_el$pat_id));
+    
+    py[i] <- sum(v * (pmax(0,
+                           as.Date(pmin(end, Qend)) -
+                             as.Date(pmax(start, Qstart)))) / 365);
+    
+    events[i] <- sum((data_el$valid_from_dt >= Qstart) &
+                       (data_el$valid_from_dt <= Qend) &
+                       (data_el$valid_from_dt >= start) &
+                       (data_el$valid_from_dt <= end), na.rm = T);
+    
+  }
+  return(cbind(py, events))}
+
+inc<-data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1), cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3))  
+
+#Plot Incidence
 i1<-qplot(as.Date(inc$dt), inc$events/inc$py,  geom=c("point", "smooth"),
             xlab="Start_dt", ylab="Incidence of PSA Test", main="PSA tests: Observed")
 i2<-qplot(as.Date(inc$dt), inc$events.1/inc$py.1,  geom=c("point", "smooth"),
@@ -28,19 +60,30 @@ i2<-qplot(as.Date(inc$dt), inc$events.1/inc$py.1,  geom=c("point", "smooth"),
 i3<-qplot(as.Date(inc$dt), inc$events.2/inc$py.2,  geom=c("point", "smooth"),
           xlab="Start_dt", ylab="Incidence of PSA Test", main="PSA tests: Mixed")
 grid.arrange(i1, i2, i3, ncol=2)
-#ggplot(n_psa_start_dt_s, aes(as.Date(n_psa_start_dt_s$start_dt),n_psa_start_dt_s$n_psa_start_dt)) + geom_point() +
-#  geom_smooth(method = 'loess', aes(x=as.Date(n_psa_start_dt_s$start_dt), y=n_psa_start_dt_s$n_psa_start_dt), se = FALSE) 
 
-qplot(as.Date(n_psa_start_dt$start_dt_1),n_psa_start_dt$ir1, geom=c("point", "smooth"),
-      xlab="Start_dt", ylab="Incidence of PSA Test", main="PSA tests: Study end")
+#verifying sum py per dt and per patients
+#Observed
+sum(inc$py)
+sum(data_el$fup_y_1*v)
+#Study End
+sum(inc$py.1)
+sum(data_el$fup_y_2*v)
+#Mixed
+sum(inc$py.2)
+sum(data_el$fup_y_3*v)
 
-#Plot Observed
-qplot(as.Date(n_psa_start_dt$start_dt_3),n_psa_start_dt$n_psa_start_dt_3, geom=c("point", "smooth"),
-      xlab="Start_dt", ylab="Frequency of PSA Test", main="PSA tests: Observed")
+#Plot Frequency
+qplot(as.Date(inc$dt),inc$events, geom=c("point", "smooth"),
+      xlab="Start_dt", ylab="Frequency of PSA Test", main="PSA tests")
 
-qplot(as.Date(n_psa_start_dt$start_dt_3),n_psa_start_dt$ir3, geom=c("point", "smooth"),
-      xlab="Start_dt", ylab="Incidence of PSA Test", main="PSA tests: Observed")
+n_psa_id<-data.frame(pat_id=unique(data_el$pat_id), n_psa=tapply(!is.na(data_el$psa), data_el$pat_id, sum)) 
+n_psa_id<-join(n_psa_id, data_el, match ="first")
+n_psa_id$n_inc1<-n_psa_id$n_psa/as.numeric(n_psa_id$fup_y_1)
+n_psa_id$n_inc2<-n_psa_id$n_psa/as.numeric(n_psa_id$fup_y_2)
+n_psa_id$n_inc3<-n_psa_id$n_psa/as.numeric(n_psa_id$fup_y_3)
 
+######To DO
+####
 #tabular ohne missing
 table(practice_type, exclude= "")
 table(employ_status, exclude= "")
