@@ -36,6 +36,9 @@ data_el$event_urinarytract_dt[data_el$event_urinarytract_dt=="\\N"] <-""
 data_el$event_prosthyper_dt[data_el$event_prosthyper_dt=="\\N"] <-""
 data_el$event_atc_g04_dt[data_el$event_atc_g04_dt=="\\N"] <-""
 
+data_el$arzt_region_code[data_el$arzt_region_code=="AGR"|data_el$arzt_region_code=="RE"|data_el$arzt_region_code=="MIX"]<-"OTHER"
+data_el$arzt_id<-as.character(data_el$arzt_id)
+
 #first disease event
 data_el$event_first_disease_dt<-pmin(as.Date(data_el$event_prostcancer_dt, format="%Y-%m-%d"), as.Date(data_el$event_urinarytract_dt, format="%Y-%m-%d"), as.Date(data_el$event_prosthyper_dt, format="%Y-%m-%d"), as.Date(data_el$event_atc_g04_dt, format="%Y-%m-%d"), na.rm=TRUE)
 #mortality rate (for simulation of death cases)

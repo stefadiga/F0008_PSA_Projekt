@@ -47,13 +47,15 @@ cev <- function(end, start, subgroup) {
                              as.Date(pmax(start, Qstart)))) / 365, na.rm = T);
     
     events[i] <- sum(subgroup * (data_el$valid_from_dt >= Qstart) &
-                       (data_el$valid_from_dt <= Qend) &
+                       (data_el$valid_from_dt < Qend) &
                        (data_el$valid_from_dt >= start) &
-                       (data_el$valid_from_dt <= end), na.rm = T);
+                       (data_el$valid_from_dt < end), na.rm = T);
     
   }
   return(cbind(py, events))}
 
+
+#Data Set for Graphs
 inc<-data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, 1), cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, 1), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, 1))  
 
 inc_arzt_sex<-rbind(data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$arzt_sex=="f"),sex="f", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$arzt_sex=="f"), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$arzt_sex=="f")), 
@@ -77,14 +79,79 @@ inc_arzt_doby<-rbind(data.frame(dt=as.character(quarter_starts[1:(length(quarter
                      data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$c_doby==3),doby="[1960,1970)", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$c_doby==3), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$c_doby==3)),
                      data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$c_doby==4),doby="[1970,1980)", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$c_doby==4), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$c_doby==4)))
 
-#Plot Incidence
-i1<-qplot(as.Date(inc$dt), inc$events/inc$py,  geom=c("point", "smooth"),
-            ylim=c(0,0.3), xlab="Start_dt", ylab="Incidence of PSA Test", main="PSA tests: Observed")
-i2<-qplot(as.Date(inc$dt), inc$events.1/inc$py.1,  geom=c("point", "smooth"),
-          ylim=c(0,0.3), xlab="Start_dt", ylab="Incidence of PSA Test", main="PSA tests: Study End")
-i3<-qplot(as.Date(inc$dt), inc$events.2/inc$py.2,  geom=c("point", "smooth"),
-          ylim=c(0,0.3), xlab="Start_dt", ylab="Incidence of PSA Test", main="PSA tests: Mixed")
-grid.arrange(i1, i2, i3, ncol=2)
+data_el$c_age <- cut(data_el$pat_age_start_3, c(55,60,65,70,75), right=FALSE)
+
+inc_pat_age<-rbind(data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$c_age=="[55,60)"),age="[55,60)", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$c_age=="[55,60)"), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$c_age=="[55,60)")), 
+                     data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$c_age=="[60,65)"),age="[60,65)", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$c_age=="[60,65)"), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$c_age=="[60,65)")),
+                   data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$c_age=="[65,70)"),age="[65,70)", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$c_age=="[65,70)"), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$c_age=="[65,70)")),
+                     data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$c_age=="[70,75)"),age="[70,75)", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$c_age=="[70,75)"), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$c_age=="[70,75)")))
+
+cev_age <- function(end, start, class_age) {
+  # end & start are dates for patients' stay in the study period
+  # for instance class_age <- c(50, 60, 70) should partition the possible ages in
+  # [0, 49], [50, 59], [60, 69], [70, 120]
+  
+  res <- NULL;
+  
+  n_classes <- length(class_age);
+  
+  for (j in 1:(n_classes+1)) {
+    
+    # computes start and end instants for class j
+    if (j == 1) {
+      class_start <- 0; class_end <- class_age[1]-1;
+    } else {
+      if (j == (n_classes+1)) {
+        class_start <- class_age[n_classes]; class_end <- 120;
+      } else {
+        class_start <- class_age[j-1]; class_end <- class_age[j]-1;
+      }
+    }
+    
+    py <- rep(0, (length(quarter_starts)-1));
+    events <- rep(0, (length(quarter_starts)-1));
+    
+    # loops for all quarters
+    for (i in 1:(length(quarter_starts)-1)) {
+      
+      # quarter i start and end instants
+      Qstart <- rep(as.character(quarter_starts[i]), length(data_el$pat_id));
+      Qend <- rep(as.character(quarter_starts[i+1]), length(data_el$pat_id));
+      
+      # current ages for patients in the database
+      current_age <- floor(2009 - data_el$doby + # age at start of study period
+                             i / 4);               # years age at current quarter
+      
+      # indicator function of patients belonging to class j
+      grouping <- (current_age >= class_start) & (current_age <= class_end);
+      
+      py[i] <- sum(v * grouping * (pmax(0,
+                                        as.Date(pmin(end, Qend)) -
+                                          as.Date(pmax(start, Qstart)))) / 365, na.rm = T);
+      
+      events[i] <- sum(grouping * (data_el$valid_from_dt >= Qstart) &
+                         (data_el$valid_from_dt < Qend) &
+                         (data_el$valid_from_dt >= start) &
+                         (data_el$valid_from_dt < end), na.rm = T);
+      
+    }
+    
+    res <- cbind(res, py, events);
+   
+  }
+  
+  return(res);
+}
+
+class_age <-  c(50, 55, 60, 65, 70, 75);
+date()
+prova_2 <- cev_age(data_el$fup_end_dt_3, data_el$fup_start_dt_3, class_age);
+date()
+
+# total number of events:
+sum(prova[, 2*(1:(length(class_age)+1))])
+
+#CHECK
 
 #verifying sum py per dt and per patients
 #Observed
@@ -177,6 +244,55 @@ sum(data_el$fup_y_3*v*(data_el$c_doby==3), na.rm=T)
 sum(inc_arzt_doby$py.2*(inc_arzt_doby$doby=="[1970,1980)"))
 sum(data_el$fup_y_3*v*(data_el$c_doby==4), na.rm=T)
 
+#Pat Age
+#Observed
+sum(inc_pat_age$py *(inc_pat_age$age=="[55,60)"))
+sum(data_el$fup_y_1*v*(data_el$c_age=="[55,60)"), na.rm=T)
+sum(inc_pat_age$py*(inc_pat_age$age=="[60,65)"))
+sum(data_el$fup_y_1*v*(data_el$c_age=="[60,65)"), na.rm=T)
+sum(inc_pat_age$py*(inc_pat_age$age=="[65,70)"))
+sum(data_el$fup_y_1*v*(data_el$c_age=="[65,70)"), na.rm=T)
+sum(inc_pat_age$py*(inc_pat_age$age=="[70,75)"))
+sum(data_el$fup_y_1*v*(data_el$c_age=="[70,75)"), na.rm=T)
+#Study End
+sum(inc_pat_age$py.1 *(inc_pat_age$age=="[55,60)"))
+sum(data_el$fup_y_2*v*(data_el$c_age=="[55,60)"), na.rm=T)
+sum(inc_pat_age$py.1*(inc_pat_age$age=="[60,65)"))
+sum(data_el$fup_y_2*v*(data_el$c_age=="[60,65)"), na.rm=T)
+sum(inc_pat_age$py.1*(inc_pat_age$age=="[65,70)"))
+sum(data_el$fup_y_2*v*(data_el$c_age=="[65,70)"), na.rm=T)
+sum(inc_pat_age$py.1*(inc_pat_age$age=="[70,75)"))
+sum(data_el$fup_y_2*v*(data_el$c_age=="[70,75)"), na.rm=T)
+#Mixed
+sum(inc_pat_age$py.2 *(inc_pat_age$age=="[55,60)"))
+sum(data_el$fup_y_3*v*(data_el$c_age=="[55,60)"), na.rm=T)
+sum(inc_pat_age$py.2*(inc_pat_age$age=="[60,65)"))
+sum(data_el$fup_y_3*v*(data_el$c_age=="[60,65)"), na.rm=T)
+sum(inc_pat_age$py.2*(inc_pat_age$age=="[65,70)"))
+sum(data_el$fup_y_3*v*(data_el$c_age=="[65,70)"), na.rm=T)
+sum(inc_pat_age$py.2*(inc_pat_age$age=="[70,75)"))
+sum(data_el$fup_y_3*v*(data_el$c_age=="[70,75)"), na.rm=T)
+
+#events
+#Observed
+sum(inc$events)
+sum(as.Date(data_el$valid_from_dt) < as.Date(data_el$fup_end_dt_1), na.rm=T)
+#Study End
+sum(inc$events.1)
+sum(as.Date(data_el$valid_from_dt) < as.Date(data_el$fup_end_dt_2), na.rm=T)
+#Mixed
+sum(inc$events.2)
+sum(as.Date(data_el$valid_from_dt) < as.Date(data_el$fup_end_dt_3), na.rm=T)
+
+#Plot Incidence
+i1<-qplot(as.Date(inc$dt), inc$events/inc$py,  geom=c("point", "smooth"),
+          ylim=c(0,0.3), xlab="Start_dt", ylab="Incidence of PSA Test", main="PSA tests: Observed")
+i2<-qplot(as.Date(inc$dt), inc$events.1/inc$py.1,  geom=c("point", "smooth"),
+          ylim=c(0,0.3), xlab="Start_dt", ylab="Incidence of PSA Test", main="PSA tests: Study End")
+i3<-qplot(as.Date(inc$dt), inc$events.2/inc$py.2,  geom=c("point", "smooth"),
+          ylim=c(0,0.3), xlab="Start_dt", ylab="Incidence of PSA Test", main="PSA tests: Mixed")
+grid.arrange(i1, i2, i3, ncol=2)
+
 
 #by sex
 i1<-qplot(as.Date(inc_arzt_sex$dt), as.numeric(inc_arzt_sex$events/inc_arzt_sex$py), color=inc_arzt_sex$sex, geom=c("point", "smooth"),
@@ -239,17 +355,25 @@ i3<-qplot(as.Date(inc_arzt_doby$dt), as.numeric(inc_arzt_doby$events.2/inc_arzt_
 
 grid.arrange(i1, i2, i3, ncol=2)
 
+#by age
+i1<-qplot(as.Date(inc_pat_age$dt), as.numeric(inc_pat_age$events/inc_pat_age$py), color=inc_pat_age$age, geom=c("point", "smooth"),
+          ylim=c(0,0.3), xlab="Start_dt", ylab="Incidence of PSA Test", main="PSA tests: Observed") + labs(color = "Pat Age")
+
+i2<-qplot(as.Date(inc_pat_age$dt), as.numeric(inc_pat_age$events.1/inc_pat_age$py.1), color=inc_pat_age$age, geom=c("point", "smooth"),
+          ylim=c(0,0.3), xlab="Start_dt", ylab="Incidence of PSA Test", main="PSA tests: Study End") + labs(color = "Pat Age")
+
+i3<-qplot(as.Date(inc_pat_age$dt), as.numeric(inc_pat_age$events.2/inc_pat_age$py.2), color=inc_pat_age$age, geom=c("point", "smooth"),
+          ylim=c(0,0.3), xlab="Start_dt", ylab="Incidence of PSA Test", main="PSA tests: Mixed") + labs(color = "Pat Age")
+
+grid.arrange(i1, i2, i3, ncol=2)
+
+
 #Plot Frequency
 qplot(as.Date(inc$dt),inc$events, geom=c("point", "smooth"),
       xlab="Start_dt", ylab="Frequency of PSA Test", main="PSA tests")
 
-n_psa_id<-data.frame(pat_id=unique(data_el$pat_id), n_psa=tapply(!is.na(data_el$psa), data_el$pat_id, sum)) 
-n_psa_id<-join(n_psa_id, data_el, match ="first")
-n_psa_id$n_inc1<-n_psa_id$n_psa/as.numeric(n_psa_id$fup_y_1)
-n_psa_id$n_inc2<-n_psa_id$n_psa/as.numeric(n_psa_id$fup_y_2)
-n_psa_id$n_inc3<-n_psa_id$n_psa/as.numeric(n_psa_id$fup_y_3)
-
 #PSA
+
 med<-tapply(data_el$psa, cut(as.Date(data_el$valid_from_dt), as.Date(quarter_starts)), median)
 setq<-tapply(data_el$psa, cut(as.Date(data_el$valid_from_dt), as.Date(quarter_starts)), quantile, 0.75)
 novq<-tapply(data_el$psa, cut(as.Date(data_el$valid_from_dt), as.Date(quarter_starts)), quantile, 0.90)
@@ -258,7 +382,7 @@ quant<-rbind(data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)
              data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), psa_quant=0.75, value=as.vector(setq)),
              data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), psa_quant=0.9, value=as.vector(novq)))          
 
-qplot(data=quant, x=as.Date(dt), y=value, colour=as.character(psa_quant), geom=c("point","line"),
+qplot(data=quant, x=as.Date(dt), y=value, colour=as.character(psa_quant), geom=c("point","smooth"),
    ylim(c(0,8)), xlab="dt", main="Study period follow up") + labs(color = "Quantile") + 
   scale_colour_discrete(labels=c("Median", "75%-Quant", "90%-Quant")) +
 ylab(expression(paste('PSA (' , mu,g/l,')')))
@@ -266,6 +390,110 @@ ylab(expression(paste('PSA (' , mu,g/l,')')))
 #by sex
 med_f<-tapply(data_el$psa[data_el$arzt_sex=="f"], cut(as.Date(data_el$valid_from_dt[data_el$arzt_sex=="f"]), as.Date(quarter_starts)), median) 
 med_m<-tapply(data_el$psa[data_el$arzt_sex=="m"], cut(as.Date(data_el$valid_from_dt[data_el$arzt_sex=="m"]), as.Date(quarter_starts)), median) 
+setq_f<-tapply(data_el$psa[data_el$arzt_sex=="f"], cut(as.Date(data_el$valid_from_dt[data_el$arzt_sex=="f"]), as.Date(quarter_starts)), quantile, 0.75) 
+setq_m<-tapply(data_el$psa[data_el$arzt_sex=="m"], cut(as.Date(data_el$valid_from_dt[data_el$arzt_sex=="m"]), as.Date(quarter_starts)), quantile, 0.75) 
+novq_f<-tapply(data_el$psa[data_el$arzt_sex=="f"], cut(as.Date(data_el$valid_from_dt[data_el$arzt_sex=="f"]), as.Date(quarter_starts)), quantile, 0.90) 
+novq_m<-tapply(data_el$psa[data_el$arzt_sex=="m"], cut(as.Date(data_el$valid_from_dt[data_el$arzt_sex=="m"]), as.Date(quarter_starts)), quantile, 0.90) 
+
+quant_sex<-rbind(data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), psa_quant=0.5, value=as.vector(med_f), sex="f"),
+                 data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), psa_quant=0.5, value=as.vector(med_m), sex="m"),
+             data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), psa_quant=0.75, value=as.vector(setq_f), sex="f"),
+             data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), psa_quant=0.75, value=as.vector(setq_f), sex="m"),
+             data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), psa_quant=0.9, value=as.vector(novq_f), sex="f"),          
+             data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), psa_quant=0.9, value=as.vector(novq_m), sex="m"))
+
+qplot(data=quant_sex, x=as.Date(dt), y=value, colour=as.character(psa_quant), geom=c("point","smooth"),
+      xlab="dt", main="Study period follow up") + labs(color = "Quantile") + 
+  scale_colour_discrete(labels=c("Median", "75%-Quant", "90%-Quant")) +
+  facet_grid(.~ sex)+
+  ylab(expression(paste('PSA (' , mu,g/l,')')))
+
+#region
+med_C<-tapply(data_el$psa[data_el$arzt_region_code=="CEN"], cut(as.Date(data_el$valid_from_dt[data_el$arzt_region_code=="CEN"]), as.Date(quarter_starts)), median) 
+med_I<-tapply(data_el$psa[data_el$arzt_region_code=="IND"], cut(as.Date(data_el$valid_from_dt[data_el$arzt_region_code=="IND"]), as.Date(quarter_starts)), median) 
+med_O<-tapply(data_el$psa[data_el$arzt_region_code=="OTHER"], cut(as.Date(data_el$valid_from_dt[data_el$arzt_region_code=="OTHER"]), as.Date(quarter_starts)), median) 
+med_P<-tapply(data_el$psa[data_el$arzt_region_code=="PERI"], cut(as.Date(data_el$valid_from_dt[data_el$arzt_region_code=="PERI"]), as.Date(quarter_starts)), median) 
+med_S<-tapply(data_el$psa[data_el$arzt_region_code=="SUB"], cut(as.Date(data_el$valid_from_dt[data_el$arzt_region_code=="SUB"]), as.Date(quarter_starts)), median) 
+setq_C<-tapply(data_el$psa[data_el$arzt_region_code=="CEN"], cut(as.Date(data_el$valid_from_dt[data_el$arzt_region_code=="CEN"]), as.Date(quarter_starts)), quantile, 0.75) 
+setq_I<-tapply(data_el$psa[data_el$arzt_region_code=="IND"], cut(as.Date(data_el$valid_from_dt[data_el$arzt_region_code=="IND"]), as.Date(quarter_starts)), quantile, 0.75) 
+setq_O<-tapply(data_el$psa[data_el$arzt_region_code=="OTHER"], cut(as.Date(data_el$valid_from_dt[data_el$arzt_region_code=="OTHER"]), as.Date(quarter_starts)), quantile, 0.75) 
+setq_P<-tapply(data_el$psa[data_el$arzt_region_code=="PERI"], cut(as.Date(data_el$valid_from_dt[data_el$arzt_region_code=="PERI"]), as.Date(quarter_starts)), quantile, 0.75) 
+setq_S<-tapply(data_el$psa[data_el$arzt_region_code=="SUB"], cut(as.Date(data_el$valid_from_dt[data_el$arzt_region_code=="SUB"]), as.Date(quarter_starts)), quantile, 0.75) 
+novq_C<-tapply(data_el$psa[data_el$arzt_region_code=="CEN"], cut(as.Date(data_el$valid_from_dt[data_el$arzt_region_code=="CEN"]), as.Date(quarter_starts)), quantile, 0.90) 
+novq_I<-tapply(data_el$psa[data_el$arzt_region_code=="IND"], cut(as.Date(data_el$valid_from_dt[data_el$arzt_region_code=="IND"]), as.Date(quarter_starts)), quantile, 0.90) 
+novq_O<-tapply(data_el$psa[data_el$arzt_region_code=="OTHER"], cut(as.Date(data_el$valid_from_dt[data_el$arzt_region_code=="OTHER"]), as.Date(quarter_starts)), quantile, 0.90) 
+novq_P<-tapply(data_el$psa[data_el$arzt_region_code=="PERI"], cut(as.Date(data_el$valid_from_dt[data_el$arzt_region_code=="PERI"]), as.Date(quarter_starts)), quantile, 0.90) 
+novq_S<-tapply(data_el$psa[data_el$arzt_region_code=="SUB"], cut(as.Date(data_el$valid_from_dt[data_el$arzt_region_code=="SUB"]), as.Date(quarter_starts)), quantile, 0.90) 
+
+quant_reg<-rbind(data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), psa_quant=0.5, value=as.vector(med_C), region="CEN"),
+                 data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), psa_quant=0.5, value=as.vector(med_I), region="IND"),
+                 data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), psa_quant=0.5, value=as.vector(med_O), region="OTHER"),
+                 data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), psa_quant=0.5, value=as.vector(med_P), region="PERI"),
+                 data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), psa_quant=0.5, value=as.vector(med_S), region="SUB"),
+                 data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), psa_quant=0.75, value=as.vector(setq_C), region="CEN"),
+                 data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), psa_quant=0.75, value=as.vector(setq_I), region="IND"),
+                 data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), psa_quant=0.75, value=as.vector(setq_O), region="OTHER"),
+                 data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), psa_quant=0.75, value=as.vector(setq_P), region="PERI"),
+                 data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), psa_quant=0.75, value=as.vector(setq_S), region="SUB"),
+                 data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), psa_quant=0.9, value=as.vector(novq_C), region="CEN"), 
+                 data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), psa_quant=0.9, value=as.vector(novq_I), region="IND"),          
+                 data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), psa_quant=0.9, value=as.vector(novq_O), region="OTHER"),          
+                 data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), psa_quant=0.9, value=as.vector(novq_P), region="PERI"),          
+                 data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), psa_quant=0.9, value=as.vector(novq_S), region="SUB"))         
+                 
+qplot(data=quant_reg, x=as.Date(dt), y=value, colour=as.character(psa_quant), geom=c("point","smooth"),
+      xlab="dt", main="Study period follow up") + labs(color = "Quantile") + 
+  scale_colour_discrete(labels=c("Median", "75%-Quant", "90%-Quant")) +
+  facet_grid(.~ region)+
+  ylab(expression(paste('PSA (' , mu,g/l,')')))
+
+#by employ status
+med_a<-tapply(data_el$psa[data_el$employ_status=="Angestellt"], cut(as.Date(data_el$valid_from_dt[data_el$employ_status=="Angestellt"]), as.Date(quarter_starts)), median) 
+med_s<-tapply(data_el$psa[data_el$employ_status=="Selbständig"], cut(as.Date(data_el$valid_from_dt[data_el$employ_status=="Selbständig"]), as.Date(quarter_starts)), median) 
+setq_a<-tapply(data_el$psa[data_el$employ_status=="Angestellt"], cut(as.Date(data_el$valid_from_dt[data_el$employ_status=="Angestellt"]), as.Date(quarter_starts)), quantile, 0.75) 
+setq_s<-tapply(data_el$psa[data_el$employ_status=="Selbständig"], cut(as.Date(data_el$valid_from_dt[data_el$employ_status=="Selbständig"]), as.Date(quarter_starts)), quantile, 0.75) 
+novq_a<-tapply(data_el$psa[data_el$employ_status=="Angestellt"], cut(as.Date(data_el$valid_from_dt[data_el$employ_status=="Angestellt"]), as.Date(quarter_starts)), quantile, 0.90) 
+novq_s<-tapply(data_el$psa[data_el$employ_status=="Selbständig"], cut(as.Date(data_el$valid_from_dt[data_el$employ_status=="Selbständig"]), as.Date(quarter_starts)),quantile, 0.90) 
+
+quant_emp<-rbind(data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), psa_quant=0.5, value=as.vector(med_a), employ="Angestellt"),
+                 data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), psa_quant=0.5, value=as.vector(med_s), employ="Selbständig"),
+                 data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), psa_quant=0.75, value=as.vector(setq_a), employ="Angestellt"),
+                 data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), psa_quant=0.75, value=as.vector(setq_s), employ="Selbständig"),
+                 data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), psa_quant=0.9, value=as.vector(novq_a), employ="Angestellt"),          
+                 data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), psa_quant=0.9, value=as.vector(novq_s), employ="Selbständig"))
+
+qplot(data=quant_emp, x=as.Date(dt), y=value, colour=as.character(psa_quant), geom=c("point","smooth"),
+      xlab="dt", main="Study period follow up") + labs(color = "Quantile") + 
+  scale_colour_discrete(labels=c("Median", "75%-Quant", "90%-Quant")) +
+  facet_grid(.~ employ)+
+  ylab(expression(paste('PSA (' , mu,g/l,')')))
+
+#by praxis
+med_d<-tapply(data_el$psa[data_el$practice_type=="Doppelpraxis"], cut(as.Date(data_el$valid_from_dt[data_el$practice_type=="Doppelpraxis"]), as.Date(quarter_starts)), median) 
+med_e<-tapply(data_el$psa[data_el$practice_type=="Einzelpraxis"], cut(as.Date(data_el$valid_from_dt[data_el$practice_type=="Einzelpraxis"]), as.Date(quarter_starts)), median) 
+med_g<-tapply(data_el$psa[data_el$practice_type=="Gruppenpraxis"], cut(as.Date(data_el$valid_from_dt[data_el$practice_type=="Gruppenpraxis"]), as.Date(quarter_starts)), median) 
+setq_d<-tapply(data_el$psa[data_el$practice_type=="Doppelpraxis"], cut(as.Date(data_el$valid_from_dt[data_el$practice_type=="Doppelpraxis"]), as.Date(quarter_starts)), quantile, 0.75) 
+setq_e<-tapply(data_el$psa[data_el$practice_type=="Einzelpraxis"], cut(as.Date(data_el$valid_from_dt[data_el$practice_type=="Einzelpraxis"]), as.Date(quarter_starts)), quantile, 0.75) 
+setq_g<-tapply(data_el$psa[data_el$practice_type=="Gruppenpraxis"], cut(as.Date(data_el$valid_from_dt[data_el$practice_type=="Gruppenpraxis"]), as.Date(quarter_starts)), quantile, 0.75) 
+novq_d<-tapply(data_el$psa[data_el$practice_type=="Doppelpraxis"], cut(as.Date(data_el$valid_from_dt[data_el$practice_type=="Doppelpraxis"]), as.Date(quarter_starts)), quantile, 0.90) 
+novq_e<-tapply(data_el$psa[data_el$practice_type=="Einzelpraxis"], cut(as.Date(data_el$valid_from_dt[data_el$practice_type=="Einzelpraxis"]), as.Date(quarter_starts)), quantile, 0.90) 
+novq_g<-tapply(data_el$psa[data_el$practice_type=="Gruppenpraxis"], cut(as.Date(data_el$valid_from_dt[data_el$practice_type=="Gruppenpraxis"]), as.Date(quarter_starts)), quantile, 0.90) 
+
+quant_pra<-rbind(data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), psa_quant=0.5, value=as.vector(med_d), practice="Doppelpraxis"),
+                 data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), psa_quant=0.5, value=as.vector(med_e), practice="Einzelpraxis"),
+                 data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), psa_quant=0.5, value=as.vector(med_g), practice="Gruppenpraxis"),
+                 data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), psa_quant=0.75, value=as.vector(setq_d), practice="Doppelpraxis"),
+                 data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), psa_quant=0.75, value=as.vector(setq_e), practice="Einzelpraxis"),
+                 data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), psa_quant=0.75, value=as.vector(setq_g), practice="Gruppenpraxis"),
+                 data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), psa_quant=0.9, value=as.vector(novq_d), practice="Doppelpraxis"),
+                 data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), psa_quant=0.9, value=as.vector(novq_e), practice="Einzelpraxis"),
+                 data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), psa_quant=0.9, value=as.vector(novq_g), practice="Gruppenpraxis"))
+
+qplot(data=quant_pra, x=as.Date(dt), y=value, colour=as.character(psa_quant), geom=c("point","smooth"),
+      xlab="dt", main="Study period follow up") + labs(color = "Quantile") + 
+  scale_colour_discrete(labels=c("Median", "75%-Quant", "90%-Quant")) +
+  facet_grid(.~ practice)+
+  ylab(expression(paste('PSA (' , mu,g/l,')')))
 
 ######To DO
 ####
