@@ -148,6 +148,14 @@ date()
 prova_2 <- cev_age(data_el$fup_end_dt_3, data_el$fup_start_dt_3, class_age);
 date()
 
+inc_pat_age_c<-rbind(data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), py=prova_2[,1], events=prova_2[,2], class_age=rep(50, 32)),
+             data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), py=prova_2[,3], events=prova_2[,4], class_age=rep(55, 32)), 
+             data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), py=prova_2[,5], events=prova_2[,6], class_age=rep(60, 32)), 
+             data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), py=prova_2[,7], events=prova_2[,8], class_age=rep(65, 32)), 
+             data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), py=prova_2[,9], events=prova_2[,10], class_age=rep(70, 32)), 
+             data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), py=prova_2[,11], events=prova_2[,12], class_age=rep(75, 32)), 
+             data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), py=prova_2[,13], events=prova_2[,14], class_age=rep(76, 32)))
+             
 # total number of events:
 sum(prova[, 2*(1:(length(class_age)+1))])
 
@@ -356,17 +364,30 @@ i3<-qplot(as.Date(inc_arzt_doby$dt), as.numeric(inc_arzt_doby$events.2/inc_arzt_
 grid.arrange(i1, i2, i3, ncol=2)
 
 #by age
-i1<-qplot(as.Date(inc_pat_age$dt), as.numeric(inc_pat_age$events/inc_pat_age$py), color=inc_pat_age$age, geom=c("point", "smooth"),
+i1<-qplot(as.Date(inc_pat_age_c$dt[inc_pat_age_c$class_age>=55]), as.numeric(inc_pat_age_c$events[inc_pat_age_c$class_age>=55]/inc_pat_age_c$py[inc_pat_age_c$class_age>=55]), color=inc_pat_age_c$class_age[inc_pat_age_c$class_age>=55], geom=c("point", "smooth"),
           ylim=c(0,0.3), xlab="Start_dt", ylab="Incidence of PSA Test", main="PSA tests: Observed") + labs(color = "Pat Age")
 
-i2<-qplot(as.Date(inc_pat_age$dt), as.numeric(inc_pat_age$events.1/inc_pat_age$py.1), color=inc_pat_age$age, geom=c("point", "smooth"),
-          ylim=c(0,0.3), xlab="Start_dt", ylab="Incidence of PSA Test", main="PSA tests: Study End") + labs(color = "Pat Age")
+#i2<-qplot(as.Date(inc_pat_age$dt), as.numeric(inc_pat_age$events.1/inc_pat_age$py.1), color=inc_pat_age$age, geom=c("point", "smooth"),
+      #    ylim=c(0,0.3), xlab="Start_dt", ylab="Incidence of PSA Test", main="PSA tests: Study End") + labs(color = "Pat Age")
 
-i3<-qplot(as.Date(inc_pat_age$dt), as.numeric(inc_pat_age$events.2/inc_pat_age$py.2), color=inc_pat_age$age, geom=c("point", "smooth"),
-          ylim=c(0,0.3), xlab="Start_dt", ylab="Incidence of PSA Test", main="PSA tests: Mixed") + labs(color = "Pat Age")
+#i3<-qplot(as.Date(inc_pat_age$dt), as.numeric(inc_pat_age$events.2/inc_pat_age$py.2), color=inc_pat_age$age, geom=c("point", "smooth"),
+       #   ylim=c(0,0.3), xlab="Start_dt", ylab="Incidence of PSA Test", main="PSA tests: Mixed") + labs(color = "Pat Age")
 
-grid.arrange(i1, i2, i3, ncol=2)
+#grid.arrange(i1, i2, i3, ncol=2)
 
+inc_pat_age_c$inc<-as.numeric(inc_pat_age_c$events/inc_pat_age_c$py)
+inc_pat_age_c <- subset(inc_pat_age_c, inc_pat_age_c$class_age >=60 & inc_pat_age_c$class_age < 76)
+
+i1<-qplot(data=inc_pat_age_c, x=as.Date(dt), y=inc, geom=c("point","smooth"),ylim=c(0,0.3),
+      xlab="dt", main="Mixed follow up") + 
+   facet_grid(.~as.character(class_age))
+  
+inc_pat_age$inc<-as.numeric(inc_pat_age$events.2/inc_pat_age$py.2)
+
+i2<-qplot(data=inc_pat_age, x=as.Date(dt), y=inc, geom=c("point","smooth"),ylim=c(0,0.3),
+      xlab="dt", main="Mixed follow up") + 
+    facet_grid(.~age)
+grid.arrange(i1, i2, ncol=2)
 
 #Plot Frequency
 qplot(as.Date(inc$dt),inc$events, geom=c("point", "smooth"),
@@ -495,13 +516,17 @@ qplot(data=quant_pra, x=as.Date(dt), y=value, colour=as.character(psa_quant), ge
   facet_grid(.~ practice)+
   ylab(expression(paste('PSA (' , mu,g/l,')')))
 
-######To DO
+######Dummy tables
 ####
 #tabular ohne missing
-table(practice_type, exclude= "")
+table(data_el$practice_type, exclude= "")
 table(employ_status, exclude= "")
 
+#to remark patients with age <= 55 & > = 76 with elig_vec 1-1-1-1-1-1-1
+summary(data_el$pat_age_end_1)
+table(data_el$dead*v)
 
+count_psa<-table(tapply(!is.na(data_el$psa), data_el$pat_id, sum, na.rm=T))
 #study end tables (categories of frequency rates per patient)
 n_psa_id$fr_c<-cut(n_psa_id$fr, c(0,0.1, 0.15,0.25,0.3,0.5,1, 5), right=FALSE)
 n_psa_id$c_age_m <- cut(n_psa_id$age_m, c(55,57,60,65,70,76), right=FALSE)

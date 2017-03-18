@@ -87,9 +87,13 @@ data_el$fup_y_1<-(as.Date(data_el$fup_end_dt_1)-as.Date(data_el$fup_start_dt_1))
 data_el$fup_y_2<-(as.Date(data_el$fup_end_dt_2)-as.Date(data_el$fup_start_dt_2))/365
 data_el$fup_y_3<-(as.Date(data_el$fup_end_dt_3)-as.Date(data_el$fup_start_dt_3))/365
 
-data_el$pat_age_end_1<-data_el$pat_age_start_1+floor(data_el$fup_y_1)
-data_el$pat_age_end_2<-data_el$pat_age_start_2+floor(data_el$fup_y_2)
-data_el$pat_age_end_3<-data_el$pat_age_start_3+floor(data_el$fup_y_3)
+data_el$pat_age_end_1<-data_el$pat_age_start_1+floor(as.numeric(data_el$fup_y_1))
+data_el$pat_age_end_2<-data_el$pat_age_start_2+floor(as.numeric(data_el$fup_y_2))
+data_el$pat_age_end_3<-data_el$pat_age_start_3+floor(as.numeric(data_el$fup_y_3))
+
+#change el
+data_el$elig_2_1<-as.numeric((data_el$pat_age_start_1>=55 & data_el$pat_age_start_1<=75) | (data_el$pat_age_end_1>=55 & data_el$pat_age_end_1<=75)) 
+data_el <- subset(data_el, data_el$elig_2_1==1)
 
 #export
 write.csv(data_el, file="f0008_data.csv")
