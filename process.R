@@ -3,13 +3,17 @@
 # Mixed model PSA Value
 # ----------------------------------------------------------------
 
-#to review
+#adding sum of measurement by patient
+n_psa_id<-data.frame(pat_id=unique(data_el$pat_id), n_psa=tapply(data_el$psa, data_el$pat_id, length)) 
+#                     age_m=tapply(data$age, data$pat_id, mean), psa_mean=tapply(data$psa_value, data$pat_id, mean, na.rm=TRUE), fr=tapply(data$psa_n, data$pat_id, sum)/tapply(data$py, data$pat_id, sum))
+#db by patient
+n_psa_id<-join(n_psa_id, data_el, match ="first")
 a00<-subset(n_psa_id, n_psa>=6)
 
-a001a0_3 <- subset(data, pat_id %in% a00$pat_id & !is.na(psa_value))
+a001a0_3 <- subset(data_el, pat_id %in% a00$pat_id & !is.na(psa))
 
 
-xyplot(psa_value~start_dt|as.factor(pat_id), data=a001a0_3,
+xyplot(psa~as.Date(valid_from_dt)|as.factor(pat_id), data=a001a0_3,
        type=c("p","g","r"),col="dark blue",col.line="black",
        xlab="start_dt",
        ylab="PSA value")
@@ -56,7 +60,7 @@ cev <- function(end, start, subgroup) {
 
 
 #Data Set for Graphs
-inc<-data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, 1), cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, 1), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, 1))  
+inc<-data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$elig_2_1), cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$elig_2_2), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$elig_2_3))  
 
 inc_arzt_sex<-rbind(data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$arzt_sex=="f"),sex="f", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$arzt_sex=="f"), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$arzt_sex=="f")), 
           data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$arzt_sex=="m"),sex="m", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$arzt_sex=="m"), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$arzt_sex=="m")))
@@ -164,13 +168,13 @@ sum(prova[, 2*(1:(length(class_age)+1))])
 #verifying sum py per dt and per patients
 #Observed
 sum(inc$py)
-sum(data_el$fup_y_1*v)
+sum(data_el$fup_y_1*data_el$elig_2_1*v)
 #Study End
 sum(inc$py.1)
-sum(data_el$fup_y_2*v)
+sum(data_el$fup_y_2*data_el$elig_2_2*v)
 #Mixed
 sum(inc$py.2)
-sum(data_el$fup_y_3*v)
+sum(data_el$fup_y_3*data_el$elig_2_3*v)
 
 #by sex
 sum(inc_arzt_sex$py *(inc_arzt_sex$sex=="f"))
@@ -526,7 +530,11 @@ table(employ_status, exclude= "")
 summary(data_el$pat_age_end_1)
 table(data_el$dead*v)
 
-count_psa<-table(tapply(!is.na(data_el$psa), data_el$pat_id, sum, na.rm=T))
+count_psa<-table(tapply(!is.na(data_el$psa[data_el$elig_2_1 & as.numeric(as.numeric(data_el$fup_y_1)>0)]), data_el$pat_id[data_el$elig_2_1 & as.numeric(as.numeric(data_el$fup_y_1)>0)], sum, na.rm=T))
+count_psa_2<-table(tapply(!is.na(data_el$psa[data_el$elig_2_2 & as.numeric(as.numeric(data_el$fup_y_2)>0)]), data_el$pat_id[data_el$elig_2_2 & as.numeric(as.numeric(data_el$fup_y_2)>0)], sum, na.rm=T))
+count_psa_3<-table(tapply(!is.na(data_el$psa[data_el$elig_2_3 & as.numeric(as.numeric(data_el$fup_y_3)>0)]), data_el$pat_id[data_el$elig_2_3 & as.numeric(as.numeric(data_el$fup_y_3)>0)], sum, na.rm=T))
+
+
 #study end tables (categories of frequency rates per patient)
 n_psa_id$fr_c<-cut(n_psa_id$fr, c(0,0.1, 0.15,0.25,0.3,0.5,1, 5), right=FALSE)
 n_psa_id$c_age_m <- cut(n_psa_id$age_m, c(55,57,60,65,70,76), right=FALSE)

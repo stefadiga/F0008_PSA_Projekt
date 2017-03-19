@@ -93,7 +93,10 @@ data_el$pat_age_end_3<-data_el$pat_age_start_3+floor(as.numeric(data_el$fup_y_3)
 
 #change el
 data_el$elig_2_1<-as.numeric((data_el$pat_age_start_1>=55 & data_el$pat_age_start_1<=75) | (data_el$pat_age_end_1>=55 & data_el$pat_age_end_1<=75)) 
-data_el <- subset(data_el, data_el$elig_2_1==1)
+data_el$elig_2_2<-as.numeric((data_el$pat_age_start_2>=55 & data_el$pat_age_start_2<=75) | (data_el$pat_age_end_2>=55 & data_el$pat_age_end_2<=75)) 
+data_el$elig_2_3<-as.numeric((data_el$pat_age_start_3>=55 & data_el$pat_age_start_3<=75) | (data_el$pat_age_end_3>=55 & data_el$pat_age_end_3<=75)) 
+
+#data_el <- subset(data_el, data_el$elig_2_1==1)
 
 #export
 write.csv(data_el, file="f0008_data.csv")
