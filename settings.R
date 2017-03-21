@@ -10,6 +10,7 @@ library(lattice)
 library(MASS)
 library(car)
 library(gridExtra)
+library(lme4)
 
 # -- Master tables
 

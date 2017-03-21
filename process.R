@@ -14,12 +14,14 @@ a001a0_3 <- subset(data_el, pat_id %in% a00$pat_id & !is.na(psa))
 
 
 xyplot(psa~as.Date(valid_from_dt)|as.factor(pat_id), data=a001a0_3,
-       type=c("p","g","r"),col="dark blue",col.line="black",
+       type=c("p","g","r"),col="dark blue",col.line="black", ylim=c(0,8),
        xlab="start_dt",
        ylab="PSA value")
 
+fm_mix<-lmer(psa~as.Date(valid_from_dt)+(as.Date(valid_from_dt)|pat_id), a001a0_3)
 
-# -------------------------------
+plot(fm_mix, sqrt(abs(resid(.)))~fitted(.), type=c("p", "smooth"))
+------------------------------
 # Incidence rates
 # ----------------------------------
 
@@ -530,14 +532,30 @@ table(employ_status, exclude= "")
 summary(data_el$pat_age_end_1)
 table(data_el$dead*v)
 
-count_psa<-table(tapply(!is.na(data_el$psa[data_el$elig_2_1 & as.numeric(as.numeric(data_el$fup_y_1)>0)]), data_el$pat_id[data_el$elig_2_1 & as.numeric(as.numeric(data_el$fup_y_1)>0)], sum, na.rm=T))
-count_psa_2<-table(tapply(!is.na(data_el$psa[data_el$elig_2_2 & as.numeric(as.numeric(data_el$fup_y_2)>0)]), data_el$pat_id[data_el$elig_2_2 & as.numeric(as.numeric(data_el$fup_y_2)>0)], sum, na.rm=T))
-count_psa_3<-table(tapply(!is.na(data_el$psa[data_el$elig_2_3 & as.numeric(as.numeric(data_el$fup_y_3)>0)]), data_el$pat_id[data_el$elig_2_3 & as.numeric(as.numeric(data_el$fup_y_3)>0)], sum, na.rm=T))
 
+######### Report tables
+########
+
+
+#N PSA
+count_psa<-as.data.frame(table(tapply(!is.na(data_el$psa[data_el$elig_2_1 & as.Date(data_el$valid_from_dt) < as.Date(data_el$fup_end_dt_1)]), data_el$pat_id[data_el$elig_2_1 & as.Date(data_el$valid_from_dt) < as.Date(data_el$fup_end_dt_1)], sum, na.rm=T), dnn=c("n_psa")), stringsAsFactors = FALSE, responseName = "n_pat")
+
+count_psa_2<-as.data.frame(table(tapply(!is.na(data_el$psa[data_el$elig_2_2 & as.Date(data_el$valid_from_dt) < as.Date(data_el$fup_end_dt_2)]), data_el$pat_id[data_el$elig_2_2 & as.Date(data_el$valid_from_dt) < as.Date(data_el$fup_end_dt_2)], sum, na.rm=T), dnn=c("n_psa")), stringsAsFactors = FALSE, responseName = "n_pat")
+
+count_psa_3<-as.data.frame(table(tapply(!is.na(data_el$psa[data_el$elig_2_3 & as.Date(data_el$valid_from_dt) < as.Date(data_el$fup_end_dt_3)]), data_el$pat_id[data_el$elig_2_3 & as.Date(data_el$valid_from_dt) < as.Date(data_el$fup_end_dt_3)], sum, na.rm=T), dnn=c("n_psa")), stringsAsFactors = FALSE, responseName ="n_pat")
+
+
+#check with length(unique(data_el$pat_id*data_el$elig_2_1) 
+el<-subset(data_el, elig_2_1==1)
+el1<-subset(data_el, elig_2_2==1)
+el2<-subset(data_el, elig_2_3==1)
+
+n_distinct(el$arzt_id[unique(el$pat_id)])
+
+tab1<-data.frame(method=c("Observed", "Study Period", "Mixed"), n_pat=c(n_distinct(el$pat_id), n_distinct(el1$pat_id), n_distinct(el2$pat_id)), psa=c(sum(as.numeric(count_psa$n_psa)*count_psa$n_pat),sum(as.numeric(count_psa_2$n_psa)*count_psa_2$n_pat), sum(as.numeric(count_psa_3$n_psa)*count_psa_3$n_pat)), py=c(sum(data_el$fup_y_1*data_el$elig_2_1*v), sum(data_el$fup_y_2*data_el$elig_2_2*v), sum(data_el$fup_y_3*data_el$elig_2_3*v)), n_arzt=c(n_distinct(el$arzt_id[unique(el$pat_id)]), n_distinct(el1$arzt_id[unique(el1$pat_id)]),n_distinct(el2$arzt_id[unique(el2$pat_id)])))
 
 #study end tables (categories of frequency rates per patient)
 n_psa_id$fr_c<-cut(n_psa_id$fr, c(0,0.1, 0.15,0.25,0.3,0.5,1, 5), right=FALSE)
-n_psa_id$c_age_m <- cut(n_psa_id$age_m, c(55,57,60,65,70,76), right=FALSE)
 n_psa_id$c_age_dum <- as.numeric(n_psa_id$age_m>=62)
 
 table(n_psa_id$fr_c)
@@ -584,3 +602,7 @@ barplot(xtabs(~n_psa_id$fr_c+ n_psa_id$employ_status, exclude=""))
 barplot(xtabs(~n_psa_id$fr_c+ n_psa_id$practice_type, exclude=""))
 barplot(xtabs(~n_psa_id$fr_c+ n_psa_id$arzt_region_code, exclude=""))
 barplot(xtabs(~n_psa_id$fr_c+ n_psa_id$arzt_sex))
+
+
+
+
