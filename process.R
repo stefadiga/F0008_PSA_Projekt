@@ -64,20 +64,24 @@ cev <- function(end, start, subgroup) {
 #Data Set for Graphs
 inc<-data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$elig_2_1), cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$elig_2_2), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$elig_2_3))  
 
-inc_arzt_sex<-rbind(data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$arzt_sex=="f"),sex="f", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$arzt_sex=="f"), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$arzt_sex=="f")), 
-          data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$arzt_sex=="m"),sex="m", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$arzt_sex=="m"), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$arzt_sex=="m")))
+inc_arzt_sex<-rbind(data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$arzt_sex=="f" & data_el$elig_2_1),sex="f", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$arzt_sex=="f" & data_el$elig_2_2), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$arzt_sex=="f" & data_el$elig_2_3)), 
+          data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$arzt_sex=="m" & data_el$elig_2_1),sex="m", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$arzt_sex=="m" & data_el$elig_2_2), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$arzt_sex=="m" & data_el$elig_2_3)))
 
-inc_arzt_prac<-rbind(data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$practice_type=="Doppelpraxis"),type="Doppelpraxis", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$practice_type=="Doppelpraxis"), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$practice_type=="Doppelpraxis")), 
-                    data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$practice_type=="Einzelpraxis"),type="Einzelpraxis", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$practice_type=="Einzelpraxis"), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$practice_type=="Einzelpraxis")),
-                    data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$practice_type=="Gruppenpraxis"),type="Gruppenpraxis", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$practice_type=="Gruppenpraxis"), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$practice_type=="Gruppenpraxis")))
+inc_arzt_prac<-rbind(data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$practice_type=="Doppelpraxis" & data_el$elig_2_1),type="Doppelpraxis", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$practice_type=="Doppelpraxis"& data_el$elig_2_2), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$practice_type=="Doppelpraxis" & data_el$elig_2_3)), 
+                    data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$practice_type=="Einzelpraxis" & data_el$elig_2_1),type="Einzelpraxis", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$practice_type=="Einzelpraxis"& data_el$elig_2_2), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$practice_type=="Einzelpraxis" & data_el$elig_2_3)),
+                    data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$practice_type=="Gruppenpraxis" & data_el$elig_2_1),type="Gruppenpraxis", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$practice_type=="Gruppenpraxis"& data_el$elig_2_2), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$practice_type=="Gruppenpraxis" & data_el$elig_2_3)),
+                    data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$practice_type=="" & data_el$elig_2_1),type="", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$practice_type=="" & data_el$elig_2_2), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$practice_type=="" & data_el$elig_2_3)))
 
-inc_arzt_reg<-rbind(data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$arzt_region_code=="CEN"),region="CEN", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$arzt_region_code=="CEN"), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$arzt_region_code=="CEN")), 
-                     data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$arzt_region_code=="IND"),region="IND-Ter", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$arzt_region_code=="IND"), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$arzt_region_code=="IND")),
-                     data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$arzt_region_code=="PERI"),region="PERI", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$arzt_region_code=="PERI"), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$arzt_region_code=="PERI")),
-                     data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$arzt_region_code=="SUB"),region="SUB", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$arzt_region_code=="SUB"), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$arzt_region_code=="SUB")))
+inc_arzt_reg<-rbind(data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$arzt_region_code=="CEN"& data_el$elig_2_1),region="CEN", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$arzt_region_code=="CEN"& data_el$elig_2_2), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$arzt_region_code=="CEN"& data_el$elig_2_3)), 
+                     data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$arzt_region_code=="IND"& data_el$elig_2_1),region="IND-Ter", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$arzt_region_code=="IND"& data_el$elig_2_2), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$arzt_region_code=="IND"& data_el$elig_2_3)),
+                     data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$arzt_region_code=="PERI"& data_el$elig_2_1),region="PERI", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$arzt_region_code=="PERI"& data_el$elig_2_2), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$arzt_region_code=="PERI"& data_el$elig_2_3)),
+                     data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$arzt_region_code=="SUB"& data_el$elig_2_1),region="SUB", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$arzt_region_code=="SUB"& data_el$elig_2_2), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$arzt_region_code=="SUB"& data_el$elig_2_3)),
+                    data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$arzt_region_code=="OTHER"& data_el$elig_2_1),region="OTHER", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$arzt_region_code=="OTHER"& data_el$elig_2_2), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$arzt_region_code=="OTHER"& data_el$elig_2_3)),
+                    data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$arzt_region_code==""& data_el$elig_2_1),region="", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$arzt_region_code==""& data_el$elig_2_2), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$arzt_region_code==""& data_el$elig_2_3)))
 
-inc_arzt_emp<-rbind(data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$employ_status=="Angestellt"), employ="Angestellt", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$employ_status=="Angestellt"), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$employ_status=="Angestellt")), 
-                    data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$employ_status=="Selbständig"), employ="Selbständig", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$employ_status=="Selbständig"), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$employ_status=="Selbständig")))
+inc_arzt_emp<-rbind(data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$employ_status=="Angestellt"& data_el$elig_2_1), employ="Angestellt", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$employ_status=="Angestellt"& data_el$elig_2_2), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$employ_status=="Angestellt"& data_el$elig_2_3)), 
+                    data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$employ_status=="Selbständig"& data_el$elig_2_1), employ="Selbständig", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$employ_status=="Selbständig"& data_el$elig_2_2), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$employ_status=="Selbständig"& data_el$elig_2_3)),
+                    data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$employ_status==""& data_el$elig_2_1), employ="", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$employ_status==""& data_el$elig_2_2), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$employ_status==""& data_el$elig_2_3)))
 
 data_el$c_doby <- cut(data_el$arzt_doby, c(1940,1950,1960,1970, 1980), right=FALSE, labels=FALSE)
 
@@ -180,43 +184,61 @@ sum(data_el$fup_y_3*data_el$elig_2_3*v)
 
 #by sex
 sum(inc_arzt_sex$py *(inc_arzt_sex$sex=="f"))
-sum(data_el$fup_y_1*v*(data_el$arzt_sex=="f"))
+sum(data_el$fup_y_1*v*(data_el$arzt_sex=="f")*data_el$elig_2_1)
 sum(inc_arzt_sex$py*(inc_arzt_sex$sex=="m"))
-sum(data_el$fup_y_1*v*(data_el$arzt_sex=="m"))
+sum(data_el$fup_y_1*v*(data_el$arzt_sex=="m")*data_el$elig_2_1)
 #Study End
 sum(inc_arzt_sex$py.1 *(inc_arzt_sex$sex=="f"))
-sum(data_el$fup_y_2*v*(data_el$arzt_sex=="f"))
+sum(data_el$fup_y_2*v*(data_el$arzt_sex=="f")*data_el$elig_2_2)
 sum(inc_arzt_sex$py.1*(inc_arzt_sex$sex=="m"))
-sum(data_el$fup_y_2*v*(data_el$arzt_sex=="m"))
+sum(data_el$fup_y_2*v*(data_el$arzt_sex=="m")*data_el$elig_2_2)
 #Mixed
 sum(inc_arzt_sex$py.2 *(inc_arzt_sex$sex=="f"))
-sum(data_el$fup_y_3*v*(data_el$arzt_sex=="f"))
+sum(data_el$fup_y_3*v*(data_el$arzt_sex=="f")*data_el$elig_2_3)
 sum(inc_arzt_sex$py.2*(inc_arzt_sex$sex=="m"))
-sum(data_el$fup_y_3*v*(data_el$arzt_sex=="m"))
+sum(data_el$fup_y_3*v*(data_el$arzt_sex=="m")*data_el$elig_2_3)
 
 #by practice
 sum(inc_arzt_prac$py *(inc_arzt_prac$type=="Doppelpraxis"))
-sum(data_el$fup_y_1*v*(data_el$practice_type=="Doppelpraxis"))
+sum(data_el$fup_y_1*v*(data_el$practice_type=="Doppelpraxis")*data_el$elig_2_1)
 sum(inc_arzt_prac$py*(inc_arzt_prac$type=="Einzelpraxis"))
-sum(data_el$fup_y_1*v*(data_el$practice_type=="Einzelpraxis"))
+sum(data_el$fup_y_1*v*(data_el$practice_type=="Einzelpraxis")*data_el$elig_2_1)
 sum(inc_arzt_prac$py*(inc_arzt_prac$type=="Gruppenpraxis"))
-sum(data_el$fup_y_1*v*(data_el$practice_type=="Gruppenpraxis"))
+sum(data_el$fup_y_1*v*(data_el$practice_type=="Gruppenpraxis")*data_el$elig_2_1)
+sum(inc_arzt_prac$py*(inc_arzt_prac$type==""))
+sum(data_el$fup_y_1*v*(data_el$practice_type=="")*data_el$elig_2_1)
 
 #Study End
 sum(inc_arzt_prac$py.1 *(inc_arzt_prac$type=="Doppelpraxis"))
-sum(data_el$fup_y_2*v*(data_el$practice_type=="Doppelpraxis"))
+sum(data_el$fup_y_2*v*(data_el$practice_type=="Doppelpraxis")*data_el$elig_2_2)
 sum(inc_arzt_prac$py.1*(inc_arzt_prac$type=="Einzelpraxis"))
-sum(data_el$fup_y_2*v*(data_el$practice_type=="Einzelpraxis"))
+sum(data_el$fup_y_2*v*(data_el$practice_type=="Einzelpraxis")*data_el$elig_2_2)
 sum(inc_arzt_prac$py.1*(inc_arzt_prac$type=="Gruppenpraxis"))
-sum(data_el$fup_y_2*v*(data_el$practice_type=="Gruppenpraxis"))
+sum(data_el$fup_y_2*v*(data_el$practice_type=="Gruppenpraxis")*data_el$elig_2_2)
+sum(inc_arzt_prac$py.1*(inc_arzt_prac$type==""))
+sum(data_el$fup_y_2*v*(data_el$practice_type=="")*data_el$elig_2_2)
 
 #Mixed
 sum(inc_arzt_prac$py.2 *(inc_arzt_prac$type=="Doppelpraxis"))
-sum(data_el$fup_y_3*v*(data_el$practice_type=="Doppelpraxis"))
+sum(data_el$fup_y_3*v*(data_el$practice_type=="Doppelpraxis")*data_el$elig_2_3)
 sum(inc_arzt_prac$py.2*(inc_arzt_prac$type=="Einzelpraxis"))
-sum(data_el$fup_y_3*v*(data_el$practice_type=="Einzelpraxis"))
+sum(data_el$fup_y_3*v*(data_el$practice_type=="Einzelpraxis")*data_el$elig_2_3)
 sum(inc_arzt_prac$py.2*(inc_arzt_prac$type=="Gruppenpraxis"))
-sum(data_el$fup_y_3*v*(data_el$practice_type=="Gruppenpraxis"))
+sum(data_el$fup_y_3*v*(data_el$practice_type=="Gruppenpraxis")*data_el$elig_2_3)
+sum(inc_arzt_prac$py.2*(inc_arzt_prac$type==""))
+sum(data_el$fup_y_3*v*(data_el$practice_type=="")*data_el$elig_2_3)
+
+#Region Type
+sum(inc_arzt_reg$py.2 *(inc_arzt_reg$region=="CEN"))
+sum(data_el$fup_y_3*v*(data_el$arzt_region_code=="CEN")*data_el$elig_2_3)
+sum(inc_arzt_reg$py.2*(inc_arzt_reg$region=="IND-Ter"))
+sum(data_el$fup_y_3*v*(data_el$arzt_region_code=="IND")*data_el$elig_2_3)
+sum(inc_arzt_reg$py.2*(inc_arzt_reg$region=="PERI"))
+sum(data_el$fup_y_3*v*(data_el$arzt_region_code=="PERI")*data_el$elig_2_3)
+sum(inc_arzt_reg$py.2*(inc_arzt_reg$region=="SUB"))
+sum(data_el$fup_y_3*v*(data_el$arzt_region_code=="SUB")*data_el$elig_2_3)
+sum(inc_arzt_reg$py.2*(inc_arzt_reg$region==""))
+sum(data_el$fup_y_3*v*(data_el$arzt_region_code=="")*data_el$elig_2_3)
 
 #Employ status
 #Observed
@@ -538,21 +560,47 @@ table(data_el$dead*v)
 
 
 #N PSA
-count_psa<-as.data.frame(table(tapply(!is.na(data_el$psa[data_el$elig_2_1 & as.Date(data_el$valid_from_dt) < as.Date(data_el$fup_end_dt_1)]), data_el$pat_id[data_el$elig_2_1 & as.Date(data_el$valid_from_dt) < as.Date(data_el$fup_end_dt_1)], sum, na.rm=T), dnn=c("n_psa")), stringsAsFactors = FALSE, responseName = "n_pat")
 
-count_psa_2<-as.data.frame(table(tapply(!is.na(data_el$psa[data_el$elig_2_2 & as.Date(data_el$valid_from_dt) < as.Date(data_el$fup_end_dt_2)]), data_el$pat_id[data_el$elig_2_2 & as.Date(data_el$valid_from_dt) < as.Date(data_el$fup_end_dt_2)], sum, na.rm=T), dnn=c("n_psa")), stringsAsFactors = FALSE, responseName = "n_pat")
-
-count_psa_3<-as.data.frame(table(tapply(!is.na(data_el$psa[data_el$elig_2_3 & as.Date(data_el$valid_from_dt) < as.Date(data_el$fup_end_dt_3)]), data_el$pat_id[data_el$elig_2_3 & as.Date(data_el$valid_from_dt) < as.Date(data_el$fup_end_dt_3)], sum, na.rm=T), dnn=c("n_psa")), stringsAsFactors = FALSE, responseName ="n_pat")
-
-
-#check with length(unique(data_el$pat_id*data_el$elig_2_1) 
 el<-subset(data_el, elig_2_1==1)
 el1<-subset(data_el, elig_2_2==1)
 el2<-subset(data_el, elig_2_3==1)
 
-n_distinct(el$arzt_id[unique(el$pat_id)])
 
-tab1<-data.frame(method=c("Observed", "Study Period", "Mixed"), n_pat=c(n_distinct(el$pat_id), n_distinct(el1$pat_id), n_distinct(el2$pat_id)), psa=c(sum(as.numeric(count_psa$n_psa)*count_psa$n_pat),sum(as.numeric(count_psa_2$n_psa)*count_psa_2$n_pat), sum(as.numeric(count_psa_3$n_psa)*count_psa_3$n_pat)), py=c(sum(data_el$fup_y_1*data_el$elig_2_1*v), sum(data_el$fup_y_2*data_el$elig_2_2*v), sum(data_el$fup_y_3*data_el$elig_2_3*v)), n_arzt=c(n_distinct(el$arzt_id[unique(el$pat_id)]), n_distinct(el1$arzt_id[unique(el1$pat_id)]),n_distinct(el2$arzt_id[unique(el2$pat_id)])))
+count_psa<-rbind(data.frame(n_psa=0, n_pat=n_distinct(el$pat_id)-sum(inc$events)), as.data.frame(table(tapply(!is.na(data_el$psa[data_el$elig_2_1 & as.Date(data_el$valid_from_dt) < as.Date(data_el$fup_end_dt_1)]), data_el$pat_id[data_el$elig_2_1 & as.Date(data_el$valid_from_dt) < as.Date(data_el$fup_end_dt_1)], sum, na.rm=T), dnn=c("n_psa")), stringsAsFactors = FALSE, responseName = "n_pat"))
+
+count_psa_2<-rbind(data.frame(n_psa=0, n_pat=n_distinct(el1$pat_id)-sum(inc$events.1)), as.data.frame(table(tapply(!is.na(data_el$psa[data_el$elig_2_2 & as.Date(data_el$valid_from_dt) < as.Date(data_el$fup_end_dt_2)]), data_el$pat_id[data_el$elig_2_2 & as.Date(data_el$valid_from_dt) < as.Date(data_el$fup_end_dt_2)], sum, na.rm=T), dnn=c("n_psa")), stringsAsFactors = FALSE, responseName = "n_pat"))
+
+count_psa_3<-rbind(data.frame(n_psa=0, n_pat=n_distinct(el2$pat_id)-sum(inc$events.2)), as.data.frame(table(tapply(!is.na(data_el$psa[data_el$elig_2_3 & as.Date(data_el$valid_from_dt) < as.Date(data_el$fup_end_dt_3)]), data_el$pat_id[data_el$elig_2_3 & as.Date(data_el$valid_from_dt) < as.Date(data_el$fup_end_dt_3)], sum, na.rm=T), dnn=c("n_psa")), stringsAsFactors = FALSE, responseName ="n_pat"))
+
+
+tab1<-data.frame(method=c("Observed", "Study Period", "Mixed"), n_pat=c(n_distinct(el$pat_id), n_distinct(el1$pat_id), n_distinct(el2$pat_id)), psa=c(sum(as.numeric(count_psa$n_psa)*count_psa$n_pat),sum(as.numeric(count_psa_2$n_psa)*count_psa_2$n_pat), sum(as.numeric(count_psa_3$n_psa)*count_psa_3$n_pat)), py=c(sum(data_el$fup_y_1*data_el$elig_2_1*v), sum(data_el$fup_y_2*data_el$elig_2_2*v), sum(data_el$fup_y_3*data_el$elig_2_3*v)), n_arzt=c(n_distinct(el$arzt_id), n_distinct(el1$arzt_id),n_distinct(el2$arzt_id)))
+tab1$ir<-as.numeric(tab1$psa)/as.numeric(tab1$py)
+
+#tab2<-data.frame(method=c("Observed", "Study Period", "Mixed"), n_pat=c(n_distinct(el$pat_id[el$arzt_sex=="m"]),n_distinct(el1$pat_id[el1$arzt_sex=="m"]), n_distinct(el2$pat_id[el2$arzt_sex=="m"])))   
+tab2<-data.frame(method=c("Mixed", "Mixed"), arzt_sex=c("f", "m"), n_pat=c(n_distinct(el2$pat_id[el2$arzt_sex=="f"]),n_distinct(el2$pat_id[el2$arzt_sex=="m"])),
+                 n_arzt=c(n_distinct(el2$arzt_id[el2$arzt_sex=="f"]),n_distinct(el2$arzt_id[el2$arzt_sex=="m"])), 
+                 n_psa=c(sum(!is.na(el2$psa[el2$arzt_sex=="f" & as.Date(el2$valid_from_dt) < as.Date(el2$fup_end_dt_3)])), sum(!is.na(el2$psa[el2$arzt_sex=="m" & as.Date(el2$valid_from_dt) < as.Date(el2$fup_end_dt_3)]))),
+                 py=c(sum(inc_arzt_sex$py.2 *(inc_arzt_sex$sex=="f")), sum(inc_arzt_sex$py.2 *(inc_arzt_sex$sex=="m"))))   
+tab2$ir<-as.numeric(tab2$n_psa)/as.numeric(tab2$py)
+
+tab3<-data.frame(method=c("Mixed", "Mixed", "Mixed", "Mixed", "Mixed", "Mixed"), region=c("CEN", "IND-Ter", "SUB", "PERI", "OTHER", "NA"), n_pat=c(n_distinct(el2$pat_id[el2$arzt_region_code=="CEN"]), n_distinct(el2$pat_id[el2$arzt_region_code=="IND"]), n_distinct(el2$pat_id[el2$arzt_region_code=="SUB"]), n_distinct(el2$pat_id[el2$arzt_region_code=="PERI"]), n_distinct(el2$pat_id[el2$arzt_region_code=="OTHER"]), n_distinct(el2$pat_id[el2$arzt_region_code==""])),
+                 n_arzt=c(n_distinct(el2$arzt_id[el2$arzt_region_code=="CEN"]), n_distinct(el2$arzt_id[el2$arzt_region_code=="IND"]), n_distinct(el2$arzt_id[el2$arzt_region_code=="SUB"]),  n_distinct(el2$arzt_id[el2$arzt_region_code=="PERI"]), n_distinct(el2$arzt_id[el2$arzt_region_code=="OTHER"]), n_distinct(el2$arzt_id[el2$arzt_region_code==""])), 
+                 n_psa=c(sum(!is.na(el2$psa[el2$arzt_region_code=="CEN" & as.Date(el2$valid_from_dt) < as.Date(el2$fup_end_dt_3)])), sum(!is.na(el2$psa[el2$arzt_region_code=="IND" & as.Date(el2$valid_from_dt) < as.Date(el2$fup_end_dt_3)])), sum(!is.na(el2$psa[el2$arzt_region_code=="SUB" & as.Date(el2$valid_from_dt) < as.Date(el2$fup_end_dt_3)])), sum(!is.na(el2$psa[el2$arzt_region_code=="PERI" & as.Date(el2$valid_from_dt) < as.Date(el2$fup_end_dt_3)])), sum(!is.na(el2$psa[el2$arzt_region_code=="OTHER" & as.Date(el2$valid_from_dt) < as.Date(el2$fup_end_dt_3)])), sum(!is.na(el2$psa[el2$arzt_region_code=="" & as.Date(el2$valid_from_dt) < as.Date(el2$fup_end_dt_3)]))),
+                 py=c(sum(inc_arzt_reg$py.2 *(inc_arzt_reg$region=="CEN")), sum(inc_arzt_reg$py.2 *(inc_arzt_reg$region=="IND-Ter")), sum(inc_arzt_reg$py.2*(inc_arzt_reg$region=="SUB")), sum(inc_arzt_reg$py.2*(inc_arzt_reg$region=="PERI")),sum(inc_arzt_reg$py.2*(inc_arzt_reg$region=="OTHER")), sum(inc_arzt_reg$py.2*(inc_arzt_reg$region==""))))   
+tab3$ir<-as.numeric(tab3$n_psa)/as.numeric(tab3$py)
+
+tab4<-data.frame(method=c("Mixed", "Mixed", "Mixed", "Mixed"), practice_type=c("Einzelpraxis", "Gruppenpraxis", "Doppelpraxis", "NA"), n_pat=c(n_distinct(el2$pat_id[el2$practice_type=="Einzelpraxis"]), n_distinct(el2$pat_id[el2$practice_type=="Gruppenpraxis"]), n_distinct(el2$pat_id[el2$practice_type=="Doppelpraxis"]), n_distinct(el2$pat_id[el2$practice_type==""])),
+                 n_arzt=c(n_distinct(el2$arzt_id[el2$practice_type=="Einzelpraxis"]), n_distinct(el2$arzt_id[el2$practice_type=="Gruppenpraxis"]), n_distinct(el2$arzt_id[el2$practice_type=="Doppelpraxis"]),  n_distinct(el2$arzt_id[el2$practice_type==""])), 
+                 n_psa=c(sum(!is.na(el2$psa[el2$practice_type=="Einzelpraxis" & as.Date(el2$valid_from_dt) < as.Date(el2$fup_end_dt_3)])), sum(!is.na(el2$psa[el2$practice_type=="Gruppenpraxis" & as.Date(el2$valid_from_dt) < as.Date(el2$fup_end_dt_3)])), sum(!is.na(el2$psa[el2$practice_type=="Doppelpraxis" & as.Date(el2$valid_from_dt) < as.Date(el2$fup_end_dt_3)])), sum(!is.na(el2$psa[el2$practice_type=="" & as.Date(el2$valid_from_dt) < as.Date(el2$fup_end_dt_3)]))),
+                 py=c(sum(inc_arzt_prac$py.2 *(inc_arzt_prac$type=="Einzelpraxis")), sum(inc_arzt_prac$py.2 *(inc_arzt_prac$type=="Gruppenpraxis")), sum(inc_arzt_prac$py.2*(inc_arzt_prac$type=="Doppelpraxis")), sum(inc_arzt_prac$py.2*(inc_arzt_prac$type==""))))   
+tab4$ir<-as.numeric(tab4$n_psa)/as.numeric(tab4$py)
+
+tab5<-data.frame(method=c("Mixed", "Mixed", "Mixed"), employ_status=c("Angestellt", "Selbständig", "NA"), n_pat=c(n_distinct(el2$pat_id[el2$employ_status=="Angestellt"]),n_distinct(el2$pat_id[el2$employ_status=="Selbständig"]), n_distinct(el2$pat_id[el2$employ_status==""])),
+                 n_arzt=c(n_distinct(el2$arzt_id[el2$employ_status=="Angestellt"]), n_distinct(el2$arzt_id[el2$employ_status=="Selbständig"]), n_distinct(el2$arzt_id[el2$employ_status==""])), 
+                 n_psa=c(sum(!is.na(el2$psa[el2$employ_status=="Angestellt" & as.Date(el2$valid_from_dt) < as.Date(el2$fup_end_dt_3)])), sum(!is.na(el2$psa[el2$employ_status=="Selbständig" & as.Date(el2$valid_from_dt) < as.Date(el2$fup_end_dt_3)])), sum(!is.na(el2$psa[el2$employ_status=="" & as.Date(el2$valid_from_dt) < as.Date(el2$fup_end_dt_3)]))),
+                 py=c(sum(inc_arzt_emp$py.2 *(inc_arzt_emp$employ=="Angestellt")), sum(inc_arzt_emp$py.2 *(inc_arzt_emp$employ=="Selbständig")), sum(inc_arzt_emp$py.2 *(inc_arzt_emp$employ==""))))   
+tab5$ir<-as.numeric(tab5$n_psa)/as.numeric(tab5$py)
+
 
 #study end tables (categories of frequency rates per patient)
 n_psa_id$fr_c<-cut(n_psa_id$fr, c(0,0.1, 0.15,0.25,0.3,0.5,1, 5), right=FALSE)
