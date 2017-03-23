@@ -81,20 +81,33 @@ inc_arzt_reg<-rbind(data.frame(dt=as.character(quarter_starts[1:(length(quarter_
 
 inc_arzt_emp<-rbind(data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$employ_status=="Angestellt"& data_el$elig_2_1), employ="Angestellt", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$employ_status=="Angestellt"& data_el$elig_2_2), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$employ_status=="Angestellt"& data_el$elig_2_3)), 
                     data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$employ_status=="Selbständig"& data_el$elig_2_1), employ="Selbständig", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$employ_status=="Selbständig"& data_el$elig_2_2), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$employ_status=="Selbständig"& data_el$elig_2_3)),
+                    data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$employ_status=="AssistentIn"& data_el$elig_2_1), employ="AssistentIn", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$employ_status=="AssistentIn"& data_el$elig_2_2), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$employ_status=="AssistentIn"& data_el$elig_2_3)),
                     data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$employ_status==""& data_el$elig_2_1), employ="", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$employ_status==""& data_el$elig_2_2), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$employ_status==""& data_el$elig_2_3)))
 
-data_el$c_doby <- cut(data_el$arzt_doby, c(1940,1950,1960,1970, 1980), right=FALSE, labels=FALSE)
+data_el$c_doby <- cut(data_el$arzt_doby, c(1940,1950,1960,1970,1980, 1990), right=FALSE, labels=FALSE)
 
-inc_arzt_doby<-rbind(data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$c_doby==2),doby="[1950,1960)", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$c_doby==2), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$c_doby==2)), 
-                     data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$c_doby==3),doby="[1960,1970)", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$c_doby==3), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$c_doby==3)),
-                     data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$c_doby==4),doby="[1970,1980)", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$c_doby==4), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$c_doby==4)))
+inc_arzt_doby<-rbind(data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$c_doby==1 & data_el$elig_2_1),doby="[1940,1950)", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$c_doby==1 & data_el$elig_2_2), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$c_doby==1 & data_el$elig_2_3)), 
+                     data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$c_doby==2 & data_el$elig_2_1),doby="[1950,1960)", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$c_doby==2 & data_el$elig_2_2), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$c_doby==2 & data_el$elig_2_3)),
+                     data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$c_doby==3 & data_el$elig_2_1),doby="[1960,1970)", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$c_doby==3 & data_el$elig_2_2), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$c_doby==3 & data_el$elig_2_3)),
+                     data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$c_doby==4 & data_el$elig_2_1),doby="[1970,1980)", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$c_doby==4 & data_el$elig_2_2), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$c_doby==4 & data_el$elig_2_3)),
+                     data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$c_doby==5 & data_el$elig_2_1),doby="[1980,1990)", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$c_doby==5 & data_el$elig_2_2), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$c_doby==5 & data_el$elig_2_3)),
+                     data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, is.na(data_el$c_doby) & data_el$elig_2_1),doby="", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, is.na(data_el$c_doby) & data_el$elig_2_2), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, is.na(data_el$c_doby) & data_el$elig_2_3)))
 
 data_el$c_age <- cut(data_el$pat_age_start_3, c(55,60,65,70,75), right=FALSE)
 
-inc_pat_age<-rbind(data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$c_age=="[55,60)"),age="[55,60)", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$c_age=="[55,60)"), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$c_age=="[55,60)")), 
-                     data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$c_age=="[60,65)"),age="[60,65)", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$c_age=="[60,65)"), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$c_age=="[60,65)")),
-                   data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$c_age=="[65,70)"),age="[65,70)", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$c_age=="[65,70)"), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$c_age=="[65,70)")),
-                     data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$c_age=="[70,75)"),age="[70,75)", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$c_age=="[70,75)"), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$c_age=="[70,75)")))
+inc_pat_age<-rbind(data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$c_age=="[55,60)"& data_el$elig_2_1),age="[55,60)", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$c_age=="[55,60)"& data_el$elig_2_2), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$c_age=="[55,60)"& data_el$elig_2_3)), 
+                     data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$c_age=="[60,65)"& data_el$elig_2_1),age="[60,65)", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$c_age=="[60,65)"& data_el$elig_2_2), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$c_age=="[60,65)"& data_el$elig_2_3)),
+                   data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$c_age=="[65,70)"& data_el$elig_2_1),age="[65,70)", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$c_age=="[65,70)"& data_el$elig_2_2), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$c_age=="[65,70)"& data_el$elig_2_3)),
+                     data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$c_age=="[70,75)"& data_el$elig_2_1),age="[70,75)", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$c_age=="[70,75)"& data_el$elig_2_2), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$c_age=="[70,75)"& data_el$elig_2_3)))
+
+#DB EL2!!!!
+el2<-subset(data_el, elig_2_3==1)
+el2<-orderBy(~pat_id, el2)
+
+v2 <- c(1, rep(0, length(el2$pat_id)-1))
+for (i in 2:length(el2$pat_id))
+  if ((el2$pat_id[i] %in% 1:el2$pat_id[i-1]) == FALSE)
+    v2[i] <- 1;
 
 cev_age <- function(end, start, class_age) {
   # end & start are dates for patients' stay in the study period
@@ -120,51 +133,53 @@ cev_age <- function(end, start, class_age) {
     
     py <- rep(0, (length(quarter_starts)-1));
     events <- rep(0, (length(quarter_starts)-1));
-    
+    ca <- rep(0, (length(quarter_starts)-1));
     # loops for all quarters
     for (i in 1:(length(quarter_starts)-1)) {
       
       # quarter i start and end instants
-      Qstart <- rep(as.character(quarter_starts[i]), length(data_el$pat_id));
-      Qend <- rep(as.character(quarter_starts[i+1]), length(data_el$pat_id));
+      Qstart <- rep(as.character(quarter_starts[i]), length(el2$pat_id));
+      Qend <- rep(as.character(quarter_starts[i+1]), length(el2$pat_id));
       
       # current ages for patients in the database
-      current_age <- floor(2009 - data_el$doby + # age at start of study period
+      current_age <- floor(2009 - el2$doby + # age at start of study period
                              i / 4);               # years age at current quarter
       
       # indicator function of patients belonging to class j
       grouping <- (current_age >= class_start) & (current_age <= class_end);
-      
-      py[i] <- sum(v * grouping * (pmax(0,
+      ca[i]<-sum(grouping)
+      py[i] <- sum(v2 * grouping * (pmax(0,
                                         as.Date(pmin(end, Qend)) -
                                           as.Date(pmax(start, Qstart)))) / 365, na.rm = T);
       
-      events[i] <- sum(grouping * (data_el$valid_from_dt >= Qstart) &
-                         (data_el$valid_from_dt < Qend) &
-                         (data_el$valid_from_dt >= start) &
-                         (data_el$valid_from_dt < end), na.rm = T);
+      events[i] <- sum(grouping * (el2$valid_from_dt >= Qstart) &
+                         (el2$valid_from_dt < Qend) &
+                         (el2$valid_from_dt >= start) &
+                         (el2$valid_from_dt < end), na.rm = T);
       
     }
     
-    res <- cbind(res, py, events);
+    res <- cbind(res, py, events, ca);
    
   }
   
   return(res);
 }
 
-class_age <-  c(50, 55, 60, 65, 70, 75);
+
+
+class_age <-  c(55, 60, 65, 70, 75);
 date()
-prova_2 <- cev_age(data_el$fup_end_dt_3, data_el$fup_start_dt_3, class_age);
+prova_2 <- cev_age(el2$fup_end_dt_3, el2$fup_start_dt_3, class_age);
 date()
 
-inc_pat_age_c<-rbind(data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), py=prova_2[,1], events=prova_2[,2], class_age=rep(50, 32)),
-             data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), py=prova_2[,3], events=prova_2[,4], class_age=rep(55, 32)), 
-             data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), py=prova_2[,5], events=prova_2[,6], class_age=rep(60, 32)), 
-             data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), py=prova_2[,7], events=prova_2[,8], class_age=rep(65, 32)), 
-             data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), py=prova_2[,9], events=prova_2[,10], class_age=rep(70, 32)), 
-             data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), py=prova_2[,11], events=prova_2[,12], class_age=rep(75, 32)), 
-             data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), py=prova_2[,13], events=prova_2[,14], class_age=rep(76, 32)))
+inc_pat_age_c<-rbind(data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), py=prova_2[,1], events=prova_2[,2], cases=prova_2[,3], class_age=rep(55, 32)),
+             data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), py=prova_2[,4], events=prova_2[,5], cases=prova_2[,6], class_age=rep(60, 32)), 
+             data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), py=prova_2[,7], events=prova_2[,8], cases=prova_2[,9], class_age=rep(65, 32)), 
+             data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), py=prova_2[,10], events=prova_2[,11], cases=prova_2[,12], class_age=rep(70, 32)), 
+             data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), py=prova_2[,13], events=prova_2[,14], cases=prova_2[,15], class_age=rep(75, 32)), 
+             data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), py=prova_2[,16], events=prova_2[,17], cases=prova_2[,18], class_age=rep(76, 32))) 
+
              
 # total number of events:
 sum(prova[, 2*(1:(length(class_age)+1))])
@@ -243,71 +258,89 @@ sum(data_el$fup_y_3*v*(data_el$arzt_region_code=="")*data_el$elig_2_3)
 #Employ status
 #Observed
 sum(inc_arzt_emp$py *(inc_arzt_emp$employ=="Angestellt"))
-sum(data_el$fup_y_1*v*(data_el$employ_status=="Angestellt"))
+sum(data_el$fup_y_1*v*(data_el$employ_status=="Angestellt")*data_el$elig_2_1)
 sum(inc_arzt_emp$py*(inc_arzt_emp$employ=="Selbständig"))
-sum(data_el$fup_y_1*v*(data_el$employ_status=="Selbständig"))
+sum(data_el$fup_y_1*v*(data_el$employ_status=="Selbständig")*data_el$elig_2_1)
 #Study End
 sum(inc_arzt_emp$py.1 *(inc_arzt_emp$employ=="Angestellt"))
-sum(data_el$fup_y_2*v*(data_el$employ_status=="Angestellt"))
+sum(data_el$fup_y_2*v*(data_el$employ_status=="Angestellt")*data_el$elig_2_2)
 sum(inc_arzt_emp$py.1*(inc_arzt_emp$employ=="Selbständig"))
-sum(data_el$fup_y_2*v*(data_el$employ_status=="Selbständig"))
+sum(data_el$fup_y_2*v*(data_el$employ_status=="Selbständig")*data_el$elig_2_2)
 #Mixed
 sum(inc_arzt_emp$py.2 *(inc_arzt_emp$employ=="Angestellt"))
-sum(data_el$fup_y_3*v*(data_el$employ_status=="Angestellt"))
+sum(data_el$fup_y_3*v*(data_el$employ_status=="Angestellt")*data_el$elig_2_3)
 sum(inc_arzt_emp$py.2*(inc_arzt_emp$employ=="Selbständig"))
-sum(data_el$fup_y_3*v*(data_el$employ_status=="Selbständig"))
+sum(data_el$fup_y_3*v*(data_el$employ_status=="Selbständig")*data_el$elig_2_3)
+sum(inc_arzt_emp$py.2*(inc_arzt_emp$employ=="AssistentIn"))
+sum(data_el$fup_y_3*v*(data_el$employ_status=="AssistentIn")*data_el$elig_2_3)
 
 #Arzt DOBY
 #Observed
-sum(inc_arzt_doby$py *(inc_arzt_doby$doby=="[1950,1960)"))
-sum(data_el$fup_y_1*v*(data_el$c_doby==2), na.rm=T)
+sum(inc_arzt_doby$py *(inc_arzt_doby$doby=="[1940,1950)"))
+sum(data_el$fup_y_1*v*(data_el$c_doby==1)*data_el$elig_2_1, na.rm=T)
+sum(inc_arzt_doby$py*(inc_arzt_doby$doby=="[1950,1960)"))
+sum(data_el$fup_y_1*v*(data_el$c_doby==2)*data_el$elig_2_1, na.rm=T)
 sum(inc_arzt_doby$py*(inc_arzt_doby$doby=="[1960,1970)"))
-sum(data_el$fup_y_1*v*(data_el$c_doby==3), na.rm=T)
+sum(data_el$fup_y_1*v*(data_el$c_doby==3)*data_el$elig_2_1, na.rm=T)
 sum(inc_arzt_doby$py*(inc_arzt_doby$doby=="[1970,1980)"))
-sum(data_el$fup_y_1*v*(data_el$c_doby==4), na.rm=T)
+sum(data_el$fup_y_1*v*(data_el$c_doby==4)*data_el$elig_2_1, na.rm=T)
+sum(inc_arzt_doby$py*(inc_arzt_doby$doby=="[1980,1990)"))
+sum(data_el$fup_y_1*v*(data_el$c_doby==4)*data_el$elig_2_1, na.rm=T)
+
 #Study End
-sum(inc_arzt_doby$py.1 *(inc_arzt_doby$doby=="[1950,1960)"))
-sum(data_el$fup_y_2*v*(data_el$c_doby==2), na.rm=T)
+sum(inc_arzt_doby$py.1 *(inc_arzt_doby$doby=="[1940,1950)"))
+sum(data_el$fup_y_2*v*(data_el$c_doby==1)*data_el$elig_2_2, na.rm=T)
+sum(inc_arzt_doby$py.1*(inc_arzt_doby$doby=="[1950,1960)"))
+sum(data_el$fup_y_2*v*(data_el$c_doby==2)*data_el$elig_2_2, na.rm=T)
 sum(inc_arzt_doby$py.1*(inc_arzt_doby$doby=="[1960,1970)"))
-sum(data_el$fup_y_2*v*(data_el$c_doby==3), na.rm=T)
+sum(data_el$fup_y_2*v*(data_el$c_doby==3)*data_el$elig_2_2, na.rm=T)
 sum(inc_arzt_doby$py.1*(inc_arzt_doby$doby=="[1970,1980)"))
-sum(data_el$fup_y_2*v*(data_el$c_doby==4), na.rm=T)
+sum(data_el$fup_y_2*v*(data_el$c_doby==4)*data_el$elig_2_2, na.rm=T)
+sum(inc_arzt_doby$py.1*(inc_arzt_doby$doby=="[1980,1990)"))
+sum(data_el$fup_y_2*v*(data_el$c_doby==5)*data_el$elig_2_2, na.rm=T)
+
 #Mixed
-sum(inc_arzt_doby$py.2 *(inc_arzt_doby$doby=="[1950,1960)"))
-sum(data_el$fup_y_3*v*(data_el$c_doby==2), na.rm=T)
+sum(inc_arzt_doby$py.2 *(inc_arzt_doby$doby=="[1940,1950)"))
+sum(data_el$fup_y_3*v*(data_el$c_doby==1)*data_el$elig_2_3, na.rm=T)
+sum(inc_arzt_doby$py.2*(inc_arzt_doby$doby=="[1950,1960)"))
+sum(data_el$fup_y_3*v*(data_el$c_doby==2)*data_el$elig_2_3, na.rm=T)
 sum(inc_arzt_doby$py.2*(inc_arzt_doby$doby=="[1960,1970)"))
-sum(data_el$fup_y_3*v*(data_el$c_doby==3), na.rm=T)
+sum(data_el$fup_y_3*v*(data_el$c_doby==3)*data_el$elig_2_3, na.rm=T)
 sum(inc_arzt_doby$py.2*(inc_arzt_doby$doby=="[1970,1980)"))
-sum(data_el$fup_y_3*v*(data_el$c_doby==4), na.rm=T)
+sum(data_el$fup_y_3*v*(data_el$c_doby==4)*data_el$elig_2_3, na.rm=T)
+sum(inc_arzt_doby$py.2*(inc_arzt_doby$doby=="[1980,1990)"))
+sum(data_el$fup_y_3*v*(data_el$c_doby==5)*data_el$elig_2_3, na.rm=T)
+sum(inc_arzt_doby$py.2*(inc_arzt_doby$doby==""))
+sum(data_el$fup_y_3*v*(is.na(data_el$c_doby))*data_el$elig_2_3, na.rm=T)
 
 #Pat Age
 #Observed
 sum(inc_pat_age$py *(inc_pat_age$age=="[55,60)"))
-sum(data_el$fup_y_1*v*(data_el$c_age=="[55,60)"), na.rm=T)
+sum(data_el$fup_y_1*v*(data_el$c_age=="[55,60)")*data_el$elig_2_1, na.rm=T)
 sum(inc_pat_age$py*(inc_pat_age$age=="[60,65)"))
-sum(data_el$fup_y_1*v*(data_el$c_age=="[60,65)"), na.rm=T)
+sum(data_el$fup_y_1*v*(data_el$c_age=="[60,65)")*data_el$elig_2_1, na.rm=T)
 sum(inc_pat_age$py*(inc_pat_age$age=="[65,70)"))
-sum(data_el$fup_y_1*v*(data_el$c_age=="[65,70)"), na.rm=T)
+sum(data_el$fup_y_1*v*(data_el$c_age=="[65,70)")*data_el$elig_2_1, na.rm=T)
 sum(inc_pat_age$py*(inc_pat_age$age=="[70,75)"))
-sum(data_el$fup_y_1*v*(data_el$c_age=="[70,75)"), na.rm=T)
+sum(data_el$fup_y_1*v*(data_el$c_age=="[70,75)")*data_el$elig_2_1, na.rm=T)
 #Study End
 sum(inc_pat_age$py.1 *(inc_pat_age$age=="[55,60)"))
-sum(data_el$fup_y_2*v*(data_el$c_age=="[55,60)"), na.rm=T)
+sum(data_el$fup_y_2*v*(data_el$c_age=="[55,60)")*data_el$elig_2_2, na.rm=T)
 sum(inc_pat_age$py.1*(inc_pat_age$age=="[60,65)"))
-sum(data_el$fup_y_2*v*(data_el$c_age=="[60,65)"), na.rm=T)
+sum(data_el$fup_y_2*v*(data_el$c_age=="[60,65)")*data_el$elig_2_2, na.rm=T)
 sum(inc_pat_age$py.1*(inc_pat_age$age=="[65,70)"))
-sum(data_el$fup_y_2*v*(data_el$c_age=="[65,70)"), na.rm=T)
+sum(data_el$fup_y_2*v*(data_el$c_age=="[65,70)")*data_el$elig_2_2, na.rm=T)
 sum(inc_pat_age$py.1*(inc_pat_age$age=="[70,75)"))
-sum(data_el$fup_y_2*v*(data_el$c_age=="[70,75)"), na.rm=T)
+sum(data_el$fup_y_2*v*(data_el$c_age=="[70,75)")*data_el$elig_2_2, na.rm=T)
 #Mixed
 sum(inc_pat_age$py.2 *(inc_pat_age$age=="[55,60)"))
-sum(data_el$fup_y_3*v*(data_el$c_age=="[55,60)"), na.rm=T)
+sum(data_el$fup_y_3*v*(data_el$c_age=="[55,60)")*data_el$elig_2_3, na.rm=T)
 sum(inc_pat_age$py.2*(inc_pat_age$age=="[60,65)"))
-sum(data_el$fup_y_3*v*(data_el$c_age=="[60,65)"), na.rm=T)
+sum(data_el$fup_y_3*v*(data_el$c_age=="[60,65)")*data_el$elig_2_3, na.rm=T)
 sum(inc_pat_age$py.2*(inc_pat_age$age=="[65,70)"))
-sum(data_el$fup_y_3*v*(data_el$c_age=="[65,70)"), na.rm=T)
+sum(data_el$fup_y_3*v*(data_el$c_age=="[65,70)")*data_el$elig_2_3, na.rm=T)
 sum(inc_pat_age$py.2*(inc_pat_age$age=="[70,75)"))
-sum(data_el$fup_y_3*v*(data_el$c_age=="[70,75)"), na.rm=T)
+sum(data_el$fup_y_3*v*(data_el$c_age=="[70,75)")*data_el$elig_2_3, na.rm=T)
 
 #events
 #Observed
@@ -321,6 +354,8 @@ sum(inc$events.2)
 sum(as.Date(data_el$valid_from_dt) < as.Date(data_el$fup_end_dt_3), na.rm=T)
 
 #Plot Incidence
+graphics.off()
+windows(width=15, height=10)
 i1<-qplot(as.Date(inc$dt), inc$events/inc$py,  geom=c("point", "smooth"),
           ylim=c(0,0.3), xlab="Start_dt", ylab="Incidence of PSA Test", main="PSA tests: Observed")
 i2<-qplot(as.Date(inc$dt), inc$events.1/inc$py.1,  geom=c("point", "smooth"),
@@ -329,69 +364,94 @@ i3<-qplot(as.Date(inc$dt), inc$events.2/inc$py.2,  geom=c("point", "smooth"),
           ylim=c(0,0.3), xlab="Start_dt", ylab="Incidence of PSA Test", main="PSA tests: Mixed")
 grid.arrange(i1, i2, i3, ncol=2)
 
+savePlot(paste("plot_a00xa1_ir.pdf",sep="/"),type="pdf")
+save.image()
+
 
 #by sex
-i1<-qplot(as.Date(inc_arzt_sex$dt), as.numeric(inc_arzt_sex$events/inc_arzt_sex$py), color=inc_arzt_sex$sex, geom=c("point", "smooth"),
-          ylim=c(0,0.3), xlab="Start_dt", ylab="Incidence of PSA Test", main="PSA tests: Observed") + labs(color = "Sex")
+#i1<-qplot(as.Date(inc_arzt_sex$dt), as.numeric(inc_arzt_sex$events/inc_arzt_sex$py), color=inc_arzt_sex$sex, geom=c("point", "smooth"),
+#          ylim=c(0,0.3), xlab="Start_dt", ylab="Incidence of PSA Test", main="PSA tests: Observed") + labs(color = "Sex")
 
-i2<-qplot(as.Date(inc_arzt_sex$dt), as.numeric(inc_arzt_sex$events.1/inc_arzt_sex$py.1), color=inc_arzt_sex$sex, geom=c("point", "smooth"),
-          ylim=c(0,0.3), xlab="Start_dt", ylab="Incidence of PSA Test", main="PSA tests: Study End") + labs(color = "Sex")
+#i2<-qplot(as.Date(inc_arzt_sex$dt), as.numeric(inc_arzt_sex$events.1/inc_arzt_sex$py.1), color=inc_arzt_sex$sex, geom=c("point", "smooth"),
+#          ylim=c(0,0.3), xlab="Start_dt", ylab="Incidence of PSA Test", main="PSA tests: Study End") + labs(color = "Sex")
 
-i3<-qplot(as.Date(inc_arzt_sex$dt), as.numeric(inc_arzt_sex$events.2/inc_arzt_sex$py.2), color=inc_arzt_sex$sex, geom=c("point", "smooth"),
+graphics.off()
+windows(width=15, height=10)
+
+qplot(as.Date(inc_arzt_sex$dt), as.numeric(inc_arzt_sex$events.2/inc_arzt_sex$py.2), color=inc_arzt_sex$sex, geom=c("point", "smooth"),
           ylim=c(0,0.3), xlab="Start_dt", ylab="Incidence of PSA Test", main="PSA tests: Mixed") + labs(color = "Sex")
+savePlot(paste("plot_a00xa2_ir.pdf",sep="/"),type="pdf")
+save.image()
 
-grid.arrange(i1, i2, i3, ncol=2)
+#grid.arrange(i1, i2, i3, ncol=2)
 
 #by practice
-i1<-qplot(as.Date(inc_arzt_prac$dt), as.numeric(inc_arzt_prac$events/inc_arzt_prac$py), color=inc_arzt_prac$type, geom=c("point", "smooth"),
-          ylim=c(0,0.3), xlab="Start_dt", ylab="Incidence of PSA Test", main="PSA tests: Observed") + labs(color = "Practice type")
 
-i2<-qplot(as.Date(inc_arzt_prac$dt), as.numeric(inc_arzt_prac$events.1/inc_arzt_prac$py.1), color=inc_arzt_prac$type, geom=c("point", "smooth"),
-          ylim=c(0,0.3), xlab="Start_dt", ylab="Incidence of PSA Test", main="PSA tests: Study End") + labs(color = "Practice type")
+#i1<-qplot(as.Date(inc_arzt_prac$dt), as.numeric(inc_arzt_prac$events/inc_arzt_prac$py), color=inc_arzt_prac$type, geom=c("point", "smooth"),
+#          ylim=c(0,0.3), xlab="Start_dt", ylab="Incidence of PSA Test", main="PSA tests: Observed") + labs(color = "Practice type")
 
-i3<-qplot(as.Date(inc_arzt_prac$dt), as.numeric(inc_arzt_prac$events.2/inc_arzt_prac$py.2), color=inc_arzt_prac$type, geom=c("point", "smooth"),
+#i2<-qplot(as.Date(inc_arzt_prac$dt), as.numeric(inc_arzt_prac$events.1/inc_arzt_prac$py.1), color=inc_arzt_prac$type, geom=c("point", "smooth"),
+#          ylim=c(0,0.3), xlab="Start_dt", ylab="Incidence of PSA Test", main="PSA tests: Study End") + labs(color = "Practice type")
+graphics.off()
+windows(width=15, height=10)
+qplot(as.Date(inc_arzt_prac$dt[inc_arzt_prac$type!=""]), as.numeric(inc_arzt_prac$events.2[inc_arzt_prac$type!=""]/inc_arzt_prac$py.2[inc_arzt_prac$type!=""]), color=inc_arzt_prac$type[inc_arzt_prac$type!=""], geom=c("point", "smooth"),
           ylim=c(0,0.3), xlab="Start_dt", ylab="Incidence of PSA Test", main="PSA tests: Mixed") + labs(color = "Practice type")
+savePlot(paste("plot_a00xa4_ir.pdf",sep="/"),type="pdf")
+save.image()
 
-grid.arrange(i1, i2, i3, ncol=2)
+#grid.arrange(i1, i2, i3, ncol=2)
 
 #by region
 #to do add AGR?
-i1<-qplot(as.Date(inc_arzt_reg$dt), as.numeric(inc_arzt_reg$events/inc_arzt_reg$py), color=inc_arzt_reg$region, geom=c("point", "smooth"),
-          ylim=c(0,0.3), xlab="Start_dt", ylab="Incidence of PSA Test", main="PSA tests: Observed") + labs(color = "Region")
+#i1<-qplot(as.Date(inc_arzt_reg$dt), as.numeric(inc_arzt_reg$events/inc_arzt_reg$py), color=inc_arzt_reg$region, geom=c("point", "smooth"),
+ #         ylim=c(0,0.3), xlab="Start_dt", ylab="Incidence of PSA Test", main="PSA tests: Observed") + labs(color = "Region")
 
-i2<-qplot(as.Date(inc_arzt_reg$dt), as.numeric(inc_arzt_reg$events.1/inc_arzt_reg$py.1), color=inc_arzt_reg$region, geom=c("point", "smooth"),
-          ylim=c(0,0.3), xlab="Start_dt", ylab="Incidence of PSA Test", main="PSA tests: Study End") + labs(color = "Region")
+#i2<-qplot(as.Date(inc_arzt_reg$dt), as.numeric(inc_arzt_reg$events.1/inc_arzt_reg$py.1), color=inc_arzt_reg$region, geom=c("point", "smooth"),
+#          ylim=c(0,0.3), xlab="Start_dt", ylab="Incidence of PSA Test", main="PSA tests: Study End") + labs(color = "Region")
+graphics.off()
+windows(width=15, height=10)
 
-i3<-qplot(as.Date(inc_arzt_reg$dt), as.numeric(inc_arzt_reg$events.2/inc_arzt_reg$py.2), color=inc_arzt_reg$region, geom=c("point", "smooth"),
+qplot(as.Date(inc_arzt_reg$dt[inc_arzt_reg$region!=""]), as.numeric(inc_arzt_reg$events.2[inc_arzt_reg$region!=""]/inc_arzt_reg$py.2[inc_arzt_reg$region!=""]), color=inc_arzt_reg$region[inc_arzt_reg$region!=""], geom=c("point", "smooth"),
           ylim=c(0,0.3), xlab="Start_dt", ylab="Incidence of PSA Test", main="PSA tests: Mixed") + labs(color = "Region")
+savePlot(paste("plot_a00xa3_ir.pdf",sep="/"),type="pdf")
+save.image()
 
-grid.arrange(i1, i2, i3, ncol=2)
+#grid.arrange(i1, i2, i3, ncol=2)
 
 #by employ status
-i1<-qplot(as.Date(inc_arzt_emp$dt), as.numeric(inc_arzt_emp$events/inc_arzt_emp$py), color=inc_arzt_emp$employ, geom=c("point", "smooth"),
-          ylim=c(0,0.3), xlab="Start_dt", ylab="Incidence of PSA Test", main="PSA tests: Observed") + labs(color = "Employ status")
+#i1<-qplot(as.Date(inc_arzt_emp$dt), as.numeric(inc_arzt_emp$events/inc_arzt_emp$py), color=inc_arzt_emp$employ, geom=c("point", "smooth"),
+#          ylim=c(0,0.3), xlab="Start_dt", ylab="Incidence of PSA Test", main="PSA tests: Observed") + labs(color = "Employ status")
 
-i2<-qplot(as.Date(inc_arzt_emp$dt), as.numeric(inc_arzt_emp$events.1/inc_arzt_emp$py.1), color=inc_arzt_emp$employ, geom=c("point", "smooth"),
-          ylim=c(0,0.3), xlab="Start_dt", ylab="Incidence of PSA Test", main="PSA tests: Study End") + labs(color = "Employ status")
+#i2<-qplot(as.Date(inc_arzt_emp$dt), as.numeric(inc_arzt_emp$events.1/inc_arzt_emp$py.1), color=inc_arzt_emp$employ, geom=c("point", "smooth"),
+#          ylim=c(0,0.3), xlab="Start_dt", ylab="Incidence of PSA Test", main="PSA tests: Study End") + labs(color = "Employ status")
+graphics.off()
+windows(width=15, height=10)
 
-i3<-qplot(as.Date(inc_arzt_emp$dt), as.numeric(inc_arzt_emp$events.2/inc_arzt_emp$py.2), color=inc_arzt_emp$employ, geom=c("point", "smooth"),
+qplot(as.Date(inc_arzt_emp$dt[inc_arzt_emp$employ!=""]), as.numeric(inc_arzt_emp$events.2[inc_arzt_emp$employ!=""]/inc_arzt_emp$py.2[inc_arzt_emp$employ!=""]), color=inc_arzt_emp$employ[inc_arzt_emp$employ!=""], geom=c("point", "smooth"),
           ylim=c(0,0.3), xlab="Start_dt", ylab="Incidence of PSA Test", main="PSA tests: Mixed") + labs(color = "Employ status")
+savePlot(paste("plot_a00xa5_ir.pdf",sep="/"),type="pdf")
+save.image()
 
-grid.arrange(i1, i2, i3, ncol=2)
+#grid.arrange(i1, i2, i3, ncol=2)
 
 #by arzt doby
-i1<-qplot(as.Date(inc_arzt_doby$dt), as.numeric(inc_arzt_doby$events/inc_arzt_doby$py), color=inc_arzt_doby$doby, geom=c("point", "smooth"),
-          ylim=c(0,0.3), xlab="Start_dt", ylab="Incidence of PSA Test", main="PSA tests: Observed") + labs(color = "Arzt DOBY")
+#i1<-qplot(as.Date(inc_arzt_doby$dt), as.numeric(inc_arzt_doby$events/inc_arzt_doby$py), color=inc_arzt_doby$doby, geom=c("point", "smooth"),
+#          ylim=c(0,0.3), xlab="Start_dt", ylab="Incidence of PSA Test", main="PSA tests: Observed") + labs(color = "Arzt DOBY")
 
-i2<-qplot(as.Date(inc_arzt_doby$dt), as.numeric(inc_arzt_doby$events.1/inc_arzt_doby$py.1), color=inc_arzt_doby$doby, geom=c("point", "smooth"),
-          ylim=c(0,0.3), xlab="Start_dt", ylab="Incidence of PSA Test", main="PSA tests: Study End") + labs(color = "Arzt DOBY")
+#i2<-qplot(as.Date(inc_arzt_doby$dt), as.numeric(inc_arzt_doby$events.1/inc_arzt_doby$py.1), color=inc_arzt_doby$doby, geom=c("point", "smooth"),
+#          ylim=c(0,0.3), xlab="Start_dt", ylab="Incidence of PSA Test", main="PSA tests: Study End") + labs(color = "Arzt DOBY")
+graphics.off()
+windows(width=15, height=10)
 
-i3<-qplot(as.Date(inc_arzt_doby$dt), as.numeric(inc_arzt_doby$events.2/inc_arzt_doby$py.2), color=inc_arzt_doby$doby, geom=c("point", "smooth"),
+qplot(as.Date(inc_arzt_doby$dt[inc_arzt_doby$doby!=""]), as.numeric(inc_arzt_doby$events.2[inc_arzt_doby$doby!=""]/inc_arzt_doby$py.2[inc_arzt_doby$doby!=""]), color=inc_arzt_doby$doby[inc_arzt_doby$doby!=""], geom=c("point", "smooth"),
           ylim=c(0,0.3), xlab="Start_dt", ylab="Incidence of PSA Test", main="PSA tests: Mixed") + labs(color = "Arzt DOBY")
+savePlot(paste("plot_a00xa6_ir.pdf",sep="/"),type="pdf")
+save.image()
 
-grid.arrange(i1, i2, i3, ncol=2)
+#grid.arrange(i1, i2, i3, ncol=2)
 
 #by age
+
 i1<-qplot(as.Date(inc_pat_age_c$dt[inc_pat_age_c$class_age>=55]), as.numeric(inc_pat_age_c$events[inc_pat_age_c$class_age>=55]/inc_pat_age_c$py[inc_pat_age_c$class_age>=55]), color=inc_pat_age_c$class_age[inc_pat_age_c$class_age>=55], geom=c("point", "smooth"),
           ylim=c(0,0.3), xlab="Start_dt", ylab="Incidence of PSA Test", main="PSA tests: Observed") + labs(color = "Pat Age")
 
@@ -406,10 +466,16 @@ i1<-qplot(as.Date(inc_pat_age_c$dt[inc_pat_age_c$class_age>=55]), as.numeric(inc
 inc_pat_age_c$inc<-as.numeric(inc_pat_age_c$events/inc_pat_age_c$py)
 inc_pat_age_c <- subset(inc_pat_age_c, inc_pat_age_c$class_age >=60 & inc_pat_age_c$class_age < 76)
 
-i1<-qplot(data=inc_pat_age_c, x=as.Date(dt), y=inc, geom=c("point","smooth"),ylim=c(0,0.3),
+graphics.off()
+windows(width=15, height=10)
+
+qplot(data=inc_pat_age_c, x=as.Date(dt), y=inc, geom=c("point","smooth"),ylim=c(0,0.3),
       xlab="dt", main="Mixed follow up") + 
    facet_grid(.~as.character(class_age))
-  
+
+savePlot(paste("plot_a00xa7_ir.pdf",sep="/"),type="pdf")
+save.image()
+
 inc_pat_age$inc<-as.numeric(inc_pat_age$events.2/inc_pat_age$py.2)
 
 i2<-qplot(data=inc_pat_age, x=as.Date(dt), y=inc, geom=c("point","smooth"),ylim=c(0,0.3),
@@ -595,12 +661,23 @@ tab4<-data.frame(method=c("Mixed", "Mixed", "Mixed", "Mixed"), practice_type=c("
                  py=c(sum(inc_arzt_prac$py.2 *(inc_arzt_prac$type=="Einzelpraxis")), sum(inc_arzt_prac$py.2 *(inc_arzt_prac$type=="Gruppenpraxis")), sum(inc_arzt_prac$py.2*(inc_arzt_prac$type=="Doppelpraxis")), sum(inc_arzt_prac$py.2*(inc_arzt_prac$type==""))))   
 tab4$ir<-as.numeric(tab4$n_psa)/as.numeric(tab4$py)
 
-tab5<-data.frame(method=c("Mixed", "Mixed", "Mixed"), employ_status=c("Angestellt", "Selbständig", "NA"), n_pat=c(n_distinct(el2$pat_id[el2$employ_status=="Angestellt"]),n_distinct(el2$pat_id[el2$employ_status=="Selbständig"]), n_distinct(el2$pat_id[el2$employ_status==""])),
-                 n_arzt=c(n_distinct(el2$arzt_id[el2$employ_status=="Angestellt"]), n_distinct(el2$arzt_id[el2$employ_status=="Selbständig"]), n_distinct(el2$arzt_id[el2$employ_status==""])), 
-                 n_psa=c(sum(!is.na(el2$psa[el2$employ_status=="Angestellt" & as.Date(el2$valid_from_dt) < as.Date(el2$fup_end_dt_3)])), sum(!is.na(el2$psa[el2$employ_status=="Selbständig" & as.Date(el2$valid_from_dt) < as.Date(el2$fup_end_dt_3)])), sum(!is.na(el2$psa[el2$employ_status=="" & as.Date(el2$valid_from_dt) < as.Date(el2$fup_end_dt_3)]))),
-                 py=c(sum(inc_arzt_emp$py.2 *(inc_arzt_emp$employ=="Angestellt")), sum(inc_arzt_emp$py.2 *(inc_arzt_emp$employ=="Selbständig")), sum(inc_arzt_emp$py.2 *(inc_arzt_emp$employ==""))))   
+tab5<-data.frame(method=c("Mixed", "Mixed", "Mixed", "Mixed"), employ_status=c("Angestellt", "Selbständig", "Assistentin", "NA"), n_pat=c(n_distinct(el2$pat_id[el2$employ_status=="Angestellt"]),n_distinct(el2$pat_id[el2$employ_status=="Selbständig"]), n_distinct(el2$pat_id[el2$employ_status=="AssistentIn"]), n_distinct(el2$pat_id[el2$employ_status==""])),
+                 n_arzt=c(n_distinct(el2$arzt_id[el2$employ_status=="Angestellt"]), n_distinct(el2$arzt_id[el2$employ_status=="Selbständig"]), n_distinct(el2$arzt_id[el2$employ_status=="AssistentIn"]), n_distinct(el2$arzt_id[el2$employ_status==""])), 
+                 n_psa=c(sum(!is.na(el2$psa[el2$employ_status=="Angestellt" & as.Date(el2$valid_from_dt) < as.Date(el2$fup_end_dt_3)])), sum(!is.na(el2$psa[el2$employ_status=="Selbständig" & as.Date(el2$valid_from_dt) < as.Date(el2$fup_end_dt_3)])), sum(!is.na(el2$psa[el2$employ_status=="AssistentIn" & as.Date(el2$valid_from_dt) < as.Date(el2$fup_end_dt_3)])), sum(!is.na(el2$psa[el2$employ_status=="" & as.Date(el2$valid_from_dt) < as.Date(el2$fup_end_dt_3)]))),
+                 py=c(sum(inc_arzt_emp$py.2 *(inc_arzt_emp$employ=="Angestellt")), sum(inc_arzt_emp$py.2 *(inc_arzt_emp$employ=="Selbständig")), sum(inc_arzt_emp$py.2 *(inc_arzt_emp$employ=="AssistentIn")), sum(inc_arzt_emp$py.2 *(inc_arzt_emp$employ==""))))   
 tab5$ir<-as.numeric(tab5$n_psa)/as.numeric(tab5$py)
 
+el2$c_doby <- cut(el2$arzt_doby, c(1940,1950,1960,1970,1980, 1990), right=FALSE, labels=FALSE)
+
+tab6<-data.frame(method=c("Mixed", "Mixed", "Mixed", "Mixed", "Mixed", "Mixed"), arzt_doby=c("[1940,1950)", "[1950,1960)", "[1960,1970)", "[1970,1980)", "[1980,1990)", "NA"), n_pat=c(as.vector(table(el2$c_doby*v2))[2:6], n_distinct(el2$pat_id[is.na(el2$c_doby)])),
+                 n_arzt=c(tapply(el2$arzt_id, el2$c_doby, n_distinct), n_distinct(el2$arzt_id[is.na(el2$c_doby)])), 
+                 n_psa=c(sum(!is.na(el2$psa[el2$c_doby==1 & as.Date(el2$valid_from_dt) < as.Date(el2$fup_end_dt_3)])), sum(!is.na(el2$psa[el2$c_doby==2 & as.Date(el2$valid_from_dt) < as.Date(el2$fup_end_dt_3)])), sum(!is.na(el2$psa[el2$c_doby==3 & as.Date(el2$valid_from_dt) < as.Date(el2$fup_end_dt_3)])), sum(!is.na(el2$psa[el2$c_doby==4 & as.Date(el2$valid_from_dt) < as.Date(el2$fup_end_dt_3)])), sum(!is.na(el2$psa[el2$c_doby==5 & as.Date(el2$valid_from_dt) < as.Date(el2$fup_end_dt_3)])), sum(!is.na(el2$psa[is.na(el2$c_doby) & as.Date(el2$valid_from_dt) < as.Date(el2$fup_end_dt_3)]))),
+                 py=c(sum(inc_arzt_doby$py.2 *(inc_arzt_doby$doby=="[1940,1950)")), sum(inc_arzt_doby$py.2 *(inc_arzt_doby$doby=="[1950,1960)")), sum(inc_arzt_doby$py.2 *(inc_arzt_doby$doby=="[1960,1970)")), sum(inc_arzt_doby$py.2 *(inc_arzt_doby$doby=="[1970,1980)")), sum(inc_arzt_doby$py.2 *(inc_arzt_doby$doby=="[1980,1990)")), sum(inc_arzt_doby$py.2 *(inc_arzt_doby$doby==""))))   
+tab6$ir<-as.numeric(tab6$n_psa)/as.numeric(tab6$py)
+
+#patient age
+el2$c_age <- cut(el2$pat_age_start_3, c(55,60,65,70,75), right=FALSE)
+tapply(el2$pat_id, el2$c_age, n_distinct)
 
 #study end tables (categories of frequency rates per patient)
 n_psa_id$fr_c<-cut(n_psa_id$fr, c(0,0.1, 0.15,0.25,0.3,0.5,1, 5), right=FALSE)
