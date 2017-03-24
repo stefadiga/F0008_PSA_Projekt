@@ -493,15 +493,22 @@ med<-tapply(data_el$psa, cut(as.Date(data_el$valid_from_dt), as.Date(quarter_sta
 setq<-tapply(data_el$psa, cut(as.Date(data_el$valid_from_dt), as.Date(quarter_starts)), quantile, 0.75)
 novq<-tapply(data_el$psa, cut(as.Date(data_el$valid_from_dt), as.Date(quarter_starts)), quantile, 0.90)
 
+
 quant<-rbind(data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), psa_quant=0.5, value=as.vector(med)),
              data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), psa_quant=0.75, value=as.vector(setq)),
              data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), psa_quant=0.9, value=as.vector(novq)))          
+
+graphics.off()
+windows(width=15, height=10)
 
 qplot(data=quant, x=as.Date(dt), y=value, colour=as.character(psa_quant), geom=c("point","smooth"),
    ylim(c(0,8)), xlab="dt", main="Study period follow up") + labs(color = "Quantile") + 
   scale_colour_discrete(labels=c("Median", "75%-Quant", "90%-Quant")) +
 ylab(expression(paste('PSA (' , mu,g/l,')')))
-  
+
+savePlot(paste("a00xa0_3_1_psa_quantile",sep="/"),type="pdf")
+save.image()
+
 #by sex
 med_f<-tapply(data_el$psa[data_el$arzt_sex=="f"], cut(as.Date(data_el$valid_from_dt[data_el$arzt_sex=="f"]), as.Date(quarter_starts)), median) 
 med_m<-tapply(data_el$psa[data_el$arzt_sex=="m"], cut(as.Date(data_el$valid_from_dt[data_el$arzt_sex=="m"]), as.Date(quarter_starts)), median) 
@@ -517,11 +524,17 @@ quant_sex<-rbind(data.frame(dt=as.character(quarter_starts[1:(length(quarter_sta
              data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), psa_quant=0.9, value=as.vector(novq_f), sex="f"),          
              data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), psa_quant=0.9, value=as.vector(novq_m), sex="m"))
 
+graphics.off()
+windows(width=15, height=10)
+
 qplot(data=quant_sex, x=as.Date(dt), y=value, colour=as.character(psa_quant), geom=c("point","smooth"),
       xlab="dt", main="Study period follow up") + labs(color = "Quantile") + 
   scale_colour_discrete(labels=c("Median", "75%-Quant", "90%-Quant")) +
   facet_grid(.~ sex)+
   ylab(expression(paste('PSA (' , mu,g/l,')')))
+
+savePlot(paste("plot_a002a2_3_psa_quantile",sep="/"),type="pdf")
+save.image()
 
 #region
 med_C<-tapply(data_el$psa[data_el$arzt_region_code=="CEN"], cut(as.Date(data_el$valid_from_dt[data_el$arzt_region_code=="CEN"]), as.Date(quarter_starts)), median) 
@@ -555,12 +568,18 @@ quant_reg<-rbind(data.frame(dt=as.character(quarter_starts[1:(length(quarter_sta
                  data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), psa_quant=0.9, value=as.vector(novq_O), region="OTHER"),          
                  data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), psa_quant=0.9, value=as.vector(novq_P), region="PERI"),          
                  data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), psa_quant=0.9, value=as.vector(novq_S), region="SUB"))         
-                 
+
+graphics.off()
+windows(width=15, height=10)
+
 qplot(data=quant_reg, x=as.Date(dt), y=value, colour=as.character(psa_quant), geom=c("point","smooth"),
       xlab="dt", main="Study period follow up") + labs(color = "Quantile") + 
   scale_colour_discrete(labels=c("Median", "75%-Quant", "90%-Quant")) +
   facet_grid(.~ region)+
   ylab(expression(paste('PSA (' , mu,g/l,')')))
+
+savePlot(paste("plot_a002a3_3_psa_quantile",sep="/"),type="pdf")
+save.image()
 
 #by employ status
 med_a<-tapply(data_el$psa[data_el$employ_status=="Angestellt"], cut(as.Date(data_el$valid_from_dt[data_el$employ_status=="Angestellt"]), as.Date(quarter_starts)), median) 
@@ -577,11 +596,17 @@ quant_emp<-rbind(data.frame(dt=as.character(quarter_starts[1:(length(quarter_sta
                  data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), psa_quant=0.9, value=as.vector(novq_a), employ="Angestellt"),          
                  data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), psa_quant=0.9, value=as.vector(novq_s), employ="Selbständig"))
 
+graphics.off()
+windows(width=15, height=10)
+
 qplot(data=quant_emp, x=as.Date(dt), y=value, colour=as.character(psa_quant), geom=c("point","smooth"),
       xlab="dt", main="Study period follow up") + labs(color = "Quantile") + 
   scale_colour_discrete(labels=c("Median", "75%-Quant", "90%-Quant")) +
   facet_grid(.~ employ)+
   ylab(expression(paste('PSA (' , mu,g/l,')')))
+
+savePlot(paste("plot_a002a5_3_psa_quantile",sep="/"),type="pdf")
+save.image()
 
 #by praxis
 med_d<-tapply(data_el$psa[data_el$practice_type=="Doppelpraxis"], cut(as.Date(data_el$valid_from_dt[data_el$practice_type=="Doppelpraxis"]), as.Date(quarter_starts)), median) 
@@ -604,11 +629,18 @@ quant_pra<-rbind(data.frame(dt=as.character(quarter_starts[1:(length(quarter_sta
                  data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), psa_quant=0.9, value=as.vector(novq_e), practice="Einzelpraxis"),
                  data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), psa_quant=0.9, value=as.vector(novq_g), practice="Gruppenpraxis"))
 
+graphics.off()
+windows(width=15, height=10)
+
+
 qplot(data=quant_pra, x=as.Date(dt), y=value, colour=as.character(psa_quant), geom=c("point","smooth"),
       xlab="dt", main="Study period follow up") + labs(color = "Quantile") + 
   scale_colour_discrete(labels=c("Median", "75%-Quant", "90%-Quant")) +
   facet_grid(.~ practice)+
   ylab(expression(paste('PSA (' , mu,g/l,')')))
+
+savePlot(paste("plot_a002a4_3_psa_quantile",sep="/"),type="pdf")
+save.image()
 
 ######Dummy tables
 ####
@@ -670,7 +702,7 @@ tab5$ir<-as.numeric(tab5$n_psa)/as.numeric(tab5$py)
 el2$c_doby <- cut(el2$arzt_doby, c(1940,1950,1960,1970,1980, 1990), right=FALSE, labels=FALSE)
 
 tab6<-data.frame(method=c("Mixed", "Mixed", "Mixed", "Mixed", "Mixed", "Mixed"), arzt_doby=c("[1940,1950)", "[1950,1960)", "[1960,1970)", "[1970,1980)", "[1980,1990)", "NA"), n_pat=c(as.vector(table(el2$c_doby*v2))[2:6], n_distinct(el2$pat_id[is.na(el2$c_doby)])),
-                 n_arzt=c(tapply(el2$arzt_id, el2$c_doby, n_distinct), n_distinct(el2$arzt_id[is.na(el2$c_doby)])), 
+                 n_arzt=c(as.vector(tapply(el2$arzt_id, el2$c_doby, n_distinct)), n_distinct(el2$arzt_id[is.na(el2$c_doby)])), 
                  n_psa=c(sum(!is.na(el2$psa[el2$c_doby==1 & as.Date(el2$valid_from_dt) < as.Date(el2$fup_end_dt_3)])), sum(!is.na(el2$psa[el2$c_doby==2 & as.Date(el2$valid_from_dt) < as.Date(el2$fup_end_dt_3)])), sum(!is.na(el2$psa[el2$c_doby==3 & as.Date(el2$valid_from_dt) < as.Date(el2$fup_end_dt_3)])), sum(!is.na(el2$psa[el2$c_doby==4 & as.Date(el2$valid_from_dt) < as.Date(el2$fup_end_dt_3)])), sum(!is.na(el2$psa[el2$c_doby==5 & as.Date(el2$valid_from_dt) < as.Date(el2$fup_end_dt_3)])), sum(!is.na(el2$psa[is.na(el2$c_doby) & as.Date(el2$valid_from_dt) < as.Date(el2$fup_end_dt_3)]))),
                  py=c(sum(inc_arzt_doby$py.2 *(inc_arzt_doby$doby=="[1940,1950)")), sum(inc_arzt_doby$py.2 *(inc_arzt_doby$doby=="[1950,1960)")), sum(inc_arzt_doby$py.2 *(inc_arzt_doby$doby=="[1960,1970)")), sum(inc_arzt_doby$py.2 *(inc_arzt_doby$doby=="[1970,1980)")), sum(inc_arzt_doby$py.2 *(inc_arzt_doby$doby=="[1980,1990)")), sum(inc_arzt_doby$py.2 *(inc_arzt_doby$doby==""))))   
 tab6$ir<-as.numeric(tab6$n_psa)/as.numeric(tab6$py)
