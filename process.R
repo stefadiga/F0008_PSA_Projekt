@@ -147,7 +147,7 @@ cev_age <- function(end, start, class_age) {
       
       # indicator function of patients belonging to class j
       grouping <- (current_age >= class_start) & (current_age <= class_end);
-      ca[i]<-sum(grouping)
+      ca[i]<-sum(grouping*v2)
       py[i] <- sum(v2 * grouping * (pmax(0,
                                         as.Date(pmin(end, Qend)) -
                                           as.Date(pmax(start, Qstart)))) / 365, na.rm = T);
@@ -168,7 +168,7 @@ cev_age <- function(end, start, class_age) {
 
 
 
-class_age <-  c(55, 60, 65, 70, 75);
+class_age <-  c(55, 60, 65, 70, 75, 76);
 date()
 prova_2 <- cev_age(el2$fup_end_dt_3, el2$fup_start_dt_3, class_age);
 date()
@@ -474,14 +474,17 @@ save.image()
 #grid.arrange(i1, i2, i3, ncol=2)
 
 inc_pat_age_c$inc<-as.numeric(inc_pat_age_c$events/inc_pat_age_c$py)
-inc_pat_age_c <- subset(inc_pat_age_c, inc_pat_age_c$class_age >=60 & inc_pat_age_c$class_age < 76)
+inc_pat_age_c <- subset(inc_pat_age_c, inc_pat_age_c$class_age >=60 & inc_pat_age_c$class_age <=76)
 
 graphics.off()
 windows(width=15, height=10)
 
 qplot(data=inc_pat_age_c, x=as.Date(dt), y=inc, geom=c("point","smooth"),ylim=c(0,0.3),
       xlab="dt", main="Mixed follow up") + 
-   facet_grid(.~as.character(class_age))
+   facet_grid(.~as.character(class_age), labeller = as_labeller(c(`Class_age#1`="[55,60)", `Class_age#2`="[60,65)", `Class_age#3`="[65,70)", `Class_age#4`="[70,75)", `Class_age#5`="[75+)")))
+ 
+#factor(classs$age,
+ #       levels = c("Ideal", "Very Good", "Fair", "Good", "Premium"))
 
 savePlot("plot_a00xa7_ir.jpg",type="jpg")
 save.image()
@@ -819,10 +822,6 @@ age_m<-(el2$pat_age_start_3*as.numeric(el2$fup_y_3)*v2)
 sum(age_m)/sum(as.numeric(el2$fup_y_3)*v2)
 
 
-sum(inc_pat_age_c$py[inc_pat_age_c$class_age==60])
-sum(inc_pat_age_c$py[inc_pat_age_c$class_age==65])
-sum(inc_pat_age_c$py[inc_pat_age_c$class_age==70])
-sum(inc_pat_age_c$py[inc_pat_age_c$class_age==75])
 
 #study end tables (categories of frequency rates per patient)
 n_psa_id$fr_c<-cut(n_psa_id$fr, c(0,0.1, 0.15,0.25,0.3,0.5,1, 5), right=FALSE)
@@ -883,8 +882,32 @@ inc_pat_age_c1<-rbind(data.frame(dt=as.character(quarter_starts[1:(length(quarte
                      data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), py=prova_3[,22], events=prova_3[,23], cases=prova_3[,24], class_age=rep(70, 32)), 
                      data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), py=prova_3[,28], events=prova_3[,29], cases=prova_3[,30], class_age=rep(75, 32))) 
 
+#patient at studyage (check)
 c55<-sum(inc_pat_age_c1$cases[inc_pat_age_c1$class_age==55 & as.character(inc_pat_age_c1$dt)=="2009-01-01"],inc_pat_age_c1$cases[inc_pat_age_c1$class_age==55 & as.character(inc_pat_age_c1$dt)=="2010-01-01"], inc_pat_age_c1$cases[inc_pat_age_c1$class_age==55 & as.character(inc_pat_age_c1$dt)=="2011-01-01"], inc_pat_age_c1$cases[inc_pat_age_c1$class_age==55 & as.character(inc_pat_age_c1$dt)=="2012-01-01"], inc_pat_age_c1$cases[inc_pat_age_c1$class_age==55 & as.character(inc_pat_age_c1$dt)=="2013-01-01"], inc_pat_age_c1$cases[inc_pat_age_c1$class_age==55 & as.character(inc_pat_age_c1$dt)=="2014-01-01"], inc_pat_age_c1$cases[inc_pat_age_c1$class_age==55 & as.character(inc_pat_age_c1$dt)=="2015-01-01"], inc_pat_age_c1$cases[inc_pat_age_c1$class_age==55 & as.character(inc_pat_age_c1$dt)=="2016-01-01"] )
 c60<-sum(inc_pat_age_c1$cases[inc_pat_age_c1$class_age==60 & as.character(inc_pat_age_c1$dt)=="2009-01-01"],inc_pat_age_c1$cases[inc_pat_age_c1$class_age==60 & as.character(inc_pat_age_c1$dt)=="2010-01-01"], inc_pat_age_c1$cases[inc_pat_age_c1$class_age==60 & as.character(inc_pat_age_c1$dt)=="2011-01-01"], inc_pat_age_c1$cases[inc_pat_age_c1$class_age==60 & as.character(inc_pat_age_c1$dt)=="2012-01-01"], inc_pat_age_c1$cases[inc_pat_age_c1$class_age==60 & as.character(inc_pat_age_c1$dt)=="2013-01-01"], inc_pat_age_c1$cases[inc_pat_age_c1$class_age==60 & as.character(inc_pat_age_c1$dt)=="2014-01-01"], inc_pat_age_c1$cases[inc_pat_age_c1$class_age==60 & as.character(inc_pat_age_c1$dt)=="2015-01-01"], inc_pat_age_c1$cases[inc_pat_age_c1$class_age==60 & as.character(inc_pat_age_c1$dt)=="2016-01-01"] )
 c65<-sum(inc_pat_age_c1$cases[inc_pat_age_c1$class_age==65 & as.character(inc_pat_age_c1$dt)=="2009-01-01"],inc_pat_age_c1$cases[inc_pat_age_c1$class_age==65 & as.character(inc_pat_age_c1$dt)=="2010-01-01"], inc_pat_age_c1$cases[inc_pat_age_c1$class_age==65 & as.character(inc_pat_age_c1$dt)=="2011-01-01"], inc_pat_age_c1$cases[inc_pat_age_c1$class_age==65 & as.character(inc_pat_age_c1$dt)=="2012-01-01"], inc_pat_age_c1$cases[inc_pat_age_c1$class_age==65 & as.character(inc_pat_age_c1$dt)=="2013-01-01"], inc_pat_age_c1$cases[inc_pat_age_c1$class_age==65 & as.character(inc_pat_age_c1$dt)=="2014-01-01"], inc_pat_age_c1$cases[inc_pat_age_c1$class_age==65 & as.character(inc_pat_age_c1$dt)=="2015-01-01"], inc_pat_age_c1$cases[inc_pat_age_c1$class_age==65 & as.character(inc_pat_age_c1$dt)=="2016-01-01"] )
 c70<-sum(inc_pat_age_c1$cases[inc_pat_age_c1$class_age==70 & as.character(inc_pat_age_c1$dt)=="2009-01-01"],inc_pat_age_c1$cases[inc_pat_age_c1$class_age==70 & as.character(inc_pat_age_c1$dt)=="2010-01-01"], inc_pat_age_c1$cases[inc_pat_age_c1$class_age==70 & as.character(inc_pat_age_c1$dt)=="2011-01-01"], inc_pat_age_c1$cases[inc_pat_age_c1$class_age==70 & as.character(inc_pat_age_c1$dt)=="2012-01-01"], inc_pat_age_c1$cases[inc_pat_age_c1$class_age==70 & as.character(inc_pat_age_c1$dt)=="2013-01-01"], inc_pat_age_c1$cases[inc_pat_age_c1$class_age==70 & as.character(inc_pat_age_c1$dt)=="2014-01-01"], inc_pat_age_c1$cases[inc_pat_age_c1$class_age==70 & as.character(inc_pat_age_c1$dt)=="2015-01-01"], inc_pat_age_c1$cases[inc_pat_age_c1$class_age==70 & as.character(inc_pat_age_c1$dt)=="2016-01-01"] )
 c75<-sum(inc_pat_age_c1$cases[inc_pat_age_c1$class_age==75 & as.character(inc_pat_age_c1$dt)=="2009-01-01"],inc_pat_age_c1$cases[inc_pat_age_c1$class_age==75 & as.character(inc_pat_age_c1$dt)=="2010-01-01"], inc_pat_age_c1$cases[inc_pat_age_c1$class_age==75 & as.character(inc_pat_age_c1$dt)=="2011-01-01"], inc_pat_age_c1$cases[inc_pat_age_c1$class_age==75 & as.character(inc_pat_age_c1$dt)=="2012-01-01"], inc_pat_age_c1$cases[inc_pat_age_c1$class_age==75 & as.character(inc_pat_age_c1$dt)=="2013-01-01"], inc_pat_age_c1$cases[inc_pat_age_c1$class_age==75 & as.character(inc_pat_age_c1$dt)=="2014-01-01"], inc_pat_age_c1$cases[inc_pat_age_c1$class_age==75 & as.character(inc_pat_age_c1$dt)=="2015-01-01"], inc_pat_age_c1$cases[inc_pat_age_c1$class_age==75 & as.character(inc_pat_age_c1$dt)=="2016-01-01"] )
+
+el2$ind55<-as.numeric(floor(as.numeric(format(as.Date(el2$fup_end_dt_3), '%Y'))- el2$doby)>=55 & floor(as.numeric(format(as.Date(el2$fup_end_dt_3), '%Y'))-el2$doby) <=59 | (floor(as.numeric(format(as.Date(el2$fup_start_dt_3), '%Y'))- el2$doby)>=55 & floor(as.numeric(format(as.Date(el2$fup_start_dt_3), '%Y'))-el2$doby) <=59))
+el2$ind60<-as.numeric(floor(as.numeric(format(as.Date(el2$fup_end_dt_3), '%Y'))- el2$doby)>=60 & floor(as.numeric(format(as.Date(el2$fup_end_dt_3), '%Y'))-el2$doby) <=64 | (floor(as.numeric(format(as.Date(el2$fup_start_dt_3), '%Y'))- el2$doby)>=60 & floor(as.numeric(format(as.Date(el2$fup_start_dt_3), '%Y'))-el2$doby) <=64))
+el2$ind65<-as.numeric(floor(as.numeric(format(as.Date(el2$fup_end_dt_3), '%Y'))- el2$doby)>=65 & floor(as.numeric(format(as.Date(el2$fup_end_dt_3), '%Y'))-el2$doby) <=69 | (floor(as.numeric(format(as.Date(el2$fup_start_dt_3), '%Y'))- el2$doby)>=65 & floor(as.numeric(format(as.Date(el2$fup_start_dt_3), '%Y'))-el2$doby) <=69))
+el2$ind70<-as.numeric(floor(as.numeric(format(as.Date(el2$fup_end_dt_3), '%Y'))- el2$doby)>=70 & floor(as.numeric(format(as.Date(el2$fup_end_dt_3), '%Y'))-el2$doby) <=74 | (floor(as.numeric(format(as.Date(el2$fup_start_dt_3), '%Y'))- el2$doby)>=70 & floor(as.numeric(format(as.Date(el2$fup_start_dt_3), '%Y'))-el2$doby) <=74))
+el2$ind75<-as.numeric(floor(as.numeric(format(as.Date(el2$fup_end_dt_3), '%Y'))- el2$doby)>=75  | (floor(as.numeric(format(as.Date(el2$fup_start_dt_3), '%Y'))- el2$doby)>=75))
+
+
+tab8<-data.frame(method=c("Mixed", "Mixed", "Mixed", "Mixed", "Mixed"), pat_age=c("[55,60)", "[60,65)", "[65,70)","[70,75)", "[75+)"), n_pat=c(as.vector(tapply(el2$pat_id, el2$ind55, n_distinct))[2], as.vector(tapply(el2$pat_id, el2$ind60, n_distinct))[2], as.vector(tapply(el2$pat_id, el2$ind65, n_distinct))[2], as.vector(tapply(el2$pat_id, el2$ind70, n_distinct))[2], as.vector(tapply(el2$pat_id, el2$ind75, n_distinct))[2]),
+                 n_arzt=c(as.vector(tapply(el2$arzt_id, el2$ind55, n_distinct))[2], as.vector(tapply(el2$arzt_id, el2$ind60, n_distinct))[2], as.vector(tapply(el2$arzt_id, el2$ind65, n_distinct))[2], as.vector(tapply(el2$arzt_id, el2$ind70, n_distinct))[2], as.vector(tapply(el2$arzt_id, el2$ind75, n_distinct))[2]), 
+                 n_psa=c(sum(inc_pat_age_c$events[inc_pat_age_c$class_age==60]), sum(inc_pat_age_c$events[inc_pat_age_c$class_age==65]), sum(inc_pat_age_c$events[inc_pat_age_c$class_age==70]), sum(inc_pat_age_c$events[inc_pat_age_c$class_age==75]), sum(inc_pat_age_c$events[inc_pat_age_c$class_age==76])),
+                 py=c(sum(inc_pat_age_c$py[inc_pat_age_c$class_age==60]), sum(inc_pat_age_c$py[inc_pat_age_c$class_age==65]), sum(inc_pat_age_c$py[inc_pat_age_c$class_age==70]), sum(inc_pat_age_c$py[inc_pat_age_c$class_age==75]), sum(inc_pat_age_c$py[inc_pat_age_c$class_age==76])))   
+tab8$ir<-as.numeric(tab8$n_psa)/as.numeric(tab8$py)
+
+age_m<-(el2$pat_age_start_3*as.numeric(el2$fup_y_3)*v2)
+#weighted age (age with weight the contribution to the study)
+sum(age_m)/sum(as.numeric(el2$fup_y_3)*v2)
+
+
+
+
+
+

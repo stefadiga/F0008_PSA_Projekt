@@ -1,0 +1,166 @@
+---
+title: "Exploratorische Analyse PSA-Screening"
+author: "sd"
+date: "28.03.2017"
+output:
+  html_document:
+   word_document: default
+   toc: true
+   figure_caption: true
+---
+
+
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+load(".RData")
+#myLibR <- "C:/01_Fire/10_Libraries/RLib"
+#.libPaths(myLibR)
+
+library(knitr)
+library(lattice)
+library(xtable)
+library(pander)
+library(lme4)
+library(ggplot2)
+# library(pbkrtest)
+# library(sjPlot)
+library(sqldf)
+
+```
+
+# Selektionskriterien
+
+
+# Berechnung Personenjahre
+
+
+# Verteilung wiederholte Messungen / Observed follow up
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+# Anzahl Zeilen und Werte
+pander(count_psa, justify=c('left', 'right'))
+
+```
+
+# Verteilung wiederholte Messungen / Study period follow up
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+# Anzahl Zeilen und Werte
+pander(count_psa_2, justify=c('left', 'right'))
+
+```
+# Verteilung wiederholte Messungen / Mixed follow up
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+# Anzahl Zeilen und Werte
+pander(count_psa_3, justify=c('left', 'right'))
+
+```
+# Inzidenzrate (PSA-Messung/1 py) über alles
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+# Anzahl Zeilen und Werte
+pander(tab1, justify=c('left', rep('right',5)))
+
+```
+
+
+# Inzidenzrate (PSA-Messung/1 py)  über alles
+![Fig 3](plot_a00xa1_ir.jpg)
+
+
+# Inzidenzrate Arzt/Ärztin
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+# Anzahl Zeilen und Werte
+pander(tab2, justify=c('left', rep('right',6)))
+
+```
+
+# Inzidenzrate Arzt/Ärztin
+![Fig 4](plot_a00xa2_ir.jpg)
+
+# Inzidenzrate Gemeindetypologie
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+# Anzahl Zeilen und Werte
+pander(subset(tab3), justify=c('left', rep('right',6)))
+
+```
+
+# Inzidenzrate Gemeindetypologie
+![Fig 5](plot_a00xa3_ir.jpg)
+
+# Inzidenzrate Praxisart
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+# Anzahl Zeilen und Werte
+pander(tab4, justify=c('left', rep('right',6)))
+
+```
+
+# Inzidenzrate Praxisart
+![Fig 6](plot_a00xa4_ir.jpg)
+
+
+# Inzidenzrate Angestelltenverhältnis
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+# Anzahl Zeilen und Werte
+pander(tab5, justify=c('left', rep('right',6)))
+
+```
+
+
+# Inzidenzrate Angestelltenverhältnis
+![Fig 7](plot_a00xa5_ir.jpg)
+
+# Inzidenzrate Jahrgang Arzt
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+# Anzahl Zeilen und Werte
+pander(tab6, justify=c('left', rep('right',6)))
+
+```
+
+
+# Inzidenzrate Jahrgang Arzt
+![Fig 8](plot_a00xa6_ir.jpg)
+
+# Inzidenzrate Alter Patient (age at study entry)
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+# Anzahl Zeilen und Werte
+pander(tab7, justify=c('left', rep('right',6)))
+
+```
+# Inzidenzrate Alter Patient (age during study)
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+# Anzahl Zeilen und Werte
+pander(tab8, justify=c('left', rep('right',6)))
+
+```
+# Inzidenzrate Alter Patient (at study entry)
+![Fig 9.a](plot_a00xa7.0_ir.jpg)
+
+# Inzidenzrate Alter Patient
+![Fig 9.b](plot_a00xa7_ir.jpg)
+
+
+# PSA-Wert: Median, 75%- und 90%- Quantil 
+![Fig 10](a00xa0_3_1_psa_quantile.jpg)
+
+
+# PSA-Wert: Median, 75%- und 90%- Quantil / Arzt/Ärztin
+![Fig 11](plot_a002a2_3_psa_quantile.jpg)
+
+
+
+# PSA-Wert: Median, 75%- und 90%- Quantil / Region
+![Fig 12](plot_a002a3_3_psa_quantile.jpg)
+
+
+# PSA-Wert: Median, 75%- und 90%- Quantil / Praxisart
+![Fig 13](plot_a002a4_3_psa_quantile.jpg)
+
+
+# PSA-Wert: Median, 75%- und 90%- Quantil / Arbeitsverhältnis
+![Fig 14](plot_a002a5_3_psa_quantile.jpg)
+
+# PSA-Wert: Median, 75%- und 90%- Quantil / Arzt Alter
+![Fig 14](plot_a002a6_3_psa_quantile.jpg)
+# PSA-Wert: Median, 75%- und 90%- Quantil / Patient Alter (at study entry)
+![Fig 14](plot_a002a7_3_psa_quantile.jpg)
+
