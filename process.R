@@ -112,7 +112,7 @@ inc_arzt_doby_g<-rbind(data.frame(dt=as.character(quarter_starts[1:(length(quart
 data_el$c_age <- cut(data_el$pat_age_start_3, c(55,60,65,70,75,76), right=FALSE)
 
 inc_pat_age<-rbind(data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$c_age=="[55,60)"& data_el$elig_2_1, data_el),age="[55,60)", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$c_age=="[55,60)"& data_el$elig_2_2, data_el), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$c_age=="[55,60)"& data_el$elig_2_3, data_el)), 
-                     data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$c_age=="[60,65)"& data_el$elig_2_1, data_el),age="[60,65)", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$c_age=="[60,65)"& data_el$elig_2_2, data__el), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$c_age=="[60,65)"& data_el$elig_2_3, data_el)),
+                     data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$c_age=="[60,65)"& data_el$elig_2_1, data_el),age="[60,65)", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$c_age=="[60,65)"& data_el$elig_2_2, data_el), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$c_age=="[60,65)"& data_el$elig_2_3, data_el)),
                    data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$c_age=="[65,70)"& data_el$elig_2_1, data_el),age="[65,70)", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$c_age=="[65,70)"& data_el$elig_2_2, data_el), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$c_age=="[65,70)"& data_el$elig_2_3, data_el)),
                      data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$c_age=="[70,75)"& data_el$elig_2_1, data_el),age="[70,75)", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$c_age=="[70,75)"& data_el$elig_2_2, data_el), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$c_age=="[70,75)"& data_el$elig_2_3, data_el)),
                   data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$c_age=="[75,76)"& data_el$elig_2_1, data_el),age="[75,76)", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$c_age=="[75,76)"& data_el$elig_2_2, data_el), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$c_age=="[75,76)"& data_el$elig_2_3, data_el)))
@@ -191,12 +191,12 @@ date()
 prova_2 <- cev_age(el2$fup_end_dt_3, el2$fup_start_dt_3, class_age);
 date()
 
-inc_pat_age_c<-rbind(data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), py=prova_2[,1], events=prova_2[,2], cases=prova_2[,3], class_age=rep(55, 32)),
-             data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), py=prova_2[,4], events=prova_2[,5], cases=prova_2[,6], class_age=rep(60, 32)), 
-             data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), py=prova_2[,7], events=prova_2[,8], cases=prova_2[,9], class_age=rep(65, 32)), 
-             data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), py=prova_2[,10], events=prova_2[,11], cases=prova_2[,12], class_age=rep(70, 32)), 
-             data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), py=prova_2[,13], events=prova_2[,14], cases=prova_2[,15], class_age=rep(75, 32)), 
-             data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), py=prova_2[,16], events=prova_2[,17], cases=prova_2[,18], class_age=rep(76, 32))) 
+inc_pat_age_c<-rbind(data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), py=prova_2[,1], events=prova_2[,2], cases=prova_2[,3], class_age=rep("[-55)", 32)),
+             data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), py=prova_2[,4], events=prova_2[,5], cases=prova_2[,6], class_age=rep("[55,60)", 32)), 
+             data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), py=prova_2[,7], events=prova_2[,8], cases=prova_2[,9], class_age=rep("[60,65)", 32)), 
+             data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), py=prova_2[,10], events=prova_2[,11], cases=prova_2[,12], class_age=rep("[65,70)", 32)), 
+             data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), py=prova_2[,13], events=prova_2[,14], cases=prova_2[,15], class_age=rep("[70,75)", 32)), 
+             data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]), py=prova_2[,16], events=prova_2[,17], cases=prova_2[,18], class_age=rep("[75+)", 32))) 
 
              
 # total number of events:
