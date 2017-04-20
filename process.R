@@ -9,16 +9,36 @@ n_psa_id<-subset(el2, as.Date(el2$valid_from_dt) < as.Date(el2$fup_end_dt_3))
 
 n_psa_id2<-data.frame(pat_id=unique(n_psa_id$pat_id), n_psa=tapply(n_psa_id$psa, n_psa_id$pat_id, length))
 
+
 a00<-subset(n_psa_id2, n_psa>=6)
 
 a001a0_3 <- subset(el2, pat_id %in% a00$pat_id & !is.na(psa))
-a001a0_4<-merge(el2, n_psa_id2, all=TRUE)
 
-n_psa_arzt<-data.frame(arzt_id=unique(n_psa_id$arzt_id), n_psa_a=tapply(n_psa_id$psa, n_psa_id$arzt_id, length))
+a001a0_4<-merge(el2, n_psa_id2, all=TRUE)
+a001a0_4$n_psa[is.na(a001a0_4$n_psa)] <- 0
+#n_kons / length fup
+a001a0_4$rate_p<-a001a0_4$n_kons/as.numeric(a001a0_4$fup_y_3)
+# n_psa / n_kons
+a001a0_4$rate_p1<-a001a0_4$n_psa/a001a0_4$n_kons
+
+#n_psa_arzt<-data.frame(arzt_id=unique(n_psa_id$arzt_id), n_psa_a=tapply(n_psa_id$psa, n_psa_id$arzt_id, length))
+
+
+n_psa_arzt<- n_psa_id %>% group_by(arzt_id) %>% 
+       summarize(min_dt = min(as.Date(fup_start_dt_3))
+                , max_dt = max(as.Date(fup_end_dt_3))
+                , diff0 = as.numeric(max_dt-min_dt)/365.25
+                , n_psa_a = sum(!is.na(psa), na.rm=TRUE)
+                , rate = n_psa_a/diff0
+                )
+#hist(n_psa_arzt$rate)
+#hist(subset(n_psa_arzt, rate<=100)$rate)
+n_psa_arzt %>% group_by(a20=floor(rate/10)*10) %>% summarize(n=n())
+n_psa_arzt$c_arzt_f <- cut(n_psa_arzt$rate, c(0,10,65), right=FALSE, labels=FALSE)
+
 a001a0_4<-merge(a001a0_4, n_psa_arzt, all=TRUE)
-a001a0_4$n_psa_a[is.na(a001a0_4$n_psa_a)] <- 0
-a001a0_4$c_arzt_f <- cut(a001a0_4$n_psa_a, c(0,50,500), right=FALSE, labels=FALSE)
-a001a0_4$c_pat_k <- cut(a001a0_4$n_kons, c(1,20,350), right=FALSE, labels=FALSE)
+#a001a0_4$n_psa_a[is.na(a001a0_4$n_psa_a)] <- 0
+a001a0_4$c_pat_k <- cut(a001a0_4$rate_p, c(0,10,800), right=FALSE, labels=FALSE)
 
 ------------------------------
 # Incidence rates
@@ -115,7 +135,7 @@ inc_pat_age<-rbind(data.frame(dt=as.character(quarter_starts[1:(length(quarter_s
                      data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$c_age=="[60,65)"& data_el$elig_2_1, data_el),age="[60,65)", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$c_age=="[60,65)"& data_el$elig_2_2, data_el), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$c_age=="[60,65)"& data_el$elig_2_3, data_el)),
                    data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$c_age=="[65,70)"& data_el$elig_2_1, data_el),age="[65,70)", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$c_age=="[65,70)"& data_el$elig_2_2, data_el), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$c_age=="[65,70)"& data_el$elig_2_3, data_el)),
                      data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$c_age=="[70,75)"& data_el$elig_2_1, data_el),age="[70,75)", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$c_age=="[70,75)"& data_el$elig_2_2, data_el), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$c_age=="[70,75)"& data_el$elig_2_3, data_el)),
-                  data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$c_age=="[75,76)"& data_el$elig_2_1, data_el),age="[75,76)", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$c_age=="[75,76)"& data_el$elig_2_2, data_el), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$c_age=="[75,76)"& data_el$elig_2_3, data_el)))
+                  data.frame(dt=as.character(quarter_starts[1:(length(quarter_starts)-1)]),cev(data_el$fup_end_dt_1, data_el$fup_start_dt_1, data_el$c_age=="[75,76)"& data_el$elig_2_1, data_el),age="[75+)", cev(data_el$fup_end_dt_2, data_el$fup_start_dt_2, data_el$c_age=="[75,76)"& data_el$elig_2_2, data_el), cev(data_el$fup_end_dt_3, data_el$fup_start_dt_3, data_el$c_age=="[75,76)"& data_el$elig_2_3, data_el)))
 
 
 #DB patient Eligible

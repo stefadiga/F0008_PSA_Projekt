@@ -1,12 +1,16 @@
 ---
 title: "Exploratorische Analyse PSA-Screening"
 author: "sd"
-date: "28.03.2017"
+date: "April 2017"
 output:
+  word_document:
+    toc: yes
+  pdf_document:
+    toc: yes
   html_document:
-   word_document: default
-   toc: true
-   figure_caption: true
+    figure_caption: yes
+    toc: yes
+    word_document: default
 ---
 
 
@@ -61,7 +65,7 @@ pander(tab1, justify=c('left', rep('right',5)))
 ```
 
 
-# Inzidenzrate (PSA-Messung/1 py)  über alles
+# Inzidenzrate (PSA-Messung/1 py)  über alles (Eligibility >= 3 months)
 ![Fig 3](plot_a00xa1_ir.jpg)
 
 
@@ -71,7 +75,10 @@ pander(tab1, justify=c('left', rep('right',5)))
 pander(tab2, justify=c('left', rep('right',6)))
 
 ```
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+poisson.test(tab2$n_psa,tab2$py)
 
+```
 # Inzidenzrate Arzt/Ärztin
 ![Fig 4](plot_a00xa2_ir.jpg)
 
@@ -81,14 +88,23 @@ pander(tab2, justify=c('left', rep('right',6)))
 pander(subset(tab3), justify=c('left', rep('right',6)))
 
 ```
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+poisson.test(c(tab3$n_psa[1], tab3$n_psa[3]),c(tab3$py[1], tab3$py[3]))
+poisson.test(c(tab3$n_psa[1], tab3$n_psa[4]),c(tab3$py[1], tab3$py[4]))
+poisson.test(c(tab3$n_psa[4], tab3$n_psa[3]),c(tab3$py[4], tab3$py[3]))
 
-# Inzidenzrate Gemeindetypologie
+```
+# Inzidenzrate Gemeindetypologie (Other=RE, MIX, AGR)
 ![Fig 5](plot_a00xa3_ir.jpg)
 
 # Inzidenzrate Praxisart
 ```{r echo=FALSE, warning=FALSE, message=FALSE}
 # Anzahl Zeilen und Werte
 pander(tab4, justify=c('left', rep('right',6)))
+
+```
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+poisson.test(c(tab4$n_psa[1], tab4$n_psa[2]+tab4$n_psa[3]),c(tab4$py[1], tab4$py[2]+tab4$py[3]))
 
 ```
 
@@ -103,6 +119,9 @@ pander(tab5, justify=c('left', rep('right',6)))
 
 ```
 
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+poisson.test(c(tab5$n_psa[1], tab5$n_psa[2]),c(tab5$py[1], tab5$py[2]))
+```
 
 # Inzidenzrate Angestelltenverhältnis
 ![Fig 7](plot_a00xa5_ir.jpg)
@@ -113,7 +132,11 @@ pander(tab5, justify=c('left', rep('right',6)))
 pander(tab6, justify=c('left', rep('right',6)))
 
 ```
-
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+poisson.test(c(tab6$n_psa[1]+tab6$n_psa[2], tab6$n_psa[3]),c(tab6$py[1]+tab6$py[2], tab6$py[3]))
+poisson.test(c(tab6$n_psa[3], tab6$n_psa[4]+tab6$n_psa[5]),c(tab6$py[3], tab6$py[4]+tab6$py[5]))
+poisson.test(c(tab6$n_psa[1]+tab6$n_psa[2], tab6$n_psa[4]+tab6$n_psa[5]),c(tab6$py[1]+tab6$py[2], tab6$py[4]+tab6$py[5]))
+```
 
 # Inzidenzrate Jahrgang Arzt
 ![Fig 8](plot_a00xa6_ir.jpg)
@@ -125,6 +148,12 @@ pander(tab6, justify=c('left', rep('right',6)))
 pander(tab7, justify=c('left', rep('right',6)))
 
 ```
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+# Anzahl Zeilen und Werte
+summary(pois.b<-glm(events.2~age,offset=log(py.2),data=inc_pat_age,family="poisson"))
+
+
+```
 # Inzidenzrate Alter Patient (age during study)
 
 ```{r echo=FALSE, warning=FALSE, message=FALSE}
@@ -132,6 +161,13 @@ pander(tab7, justify=c('left', rep('right',6)))
 pander(tab8, justify=c('left', rep('right',6)))
 
 ```
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+# Anzahl Zeilen und Werte
+summary(pois.b<-glm(events~class_age,offset=log(py),data=inc_pat_age_c,family="poisson"))
+
+```
+
 # Inzidenzrate Alter Patient (at study entry)
 ![Fig 9.a](plot_a00xa7.0_ir.jpg)
 
@@ -142,6 +178,18 @@ pander(tab8, justify=c('left', rep('right',6)))
 # PSA-Wert: Median, 75%- und 90%- Quantil 
 ![Fig 10](a00xa0_3_1_psa_quantile.jpg)
 
+# PSA-Wert: Boxplot Log (PSA)
+![Fig 10.2](a00xa0_3_1_3_psa_quantile.jpg)
+
+# PSA-Wert: Violin plot (Log PSA)
+![Fig 10.3](a00xa0_3_1_4_psa_quantile.jpg)
+
+#PSA-Wert: Box plot Im trimester (Log PSA)
+![Fig 10.4](a00xa0_3_1_5_psa_quantile.jpg)
+
+
+#PSA-Wert: Plot (Log PSA) + smooth
+![Fig 10.5](a00xa0_3_1_6_psa_quantile.jpg)
 
 # PSA-Wert: Median, 75%- und 90%- Quantil / Arzt/Ärztin
 ![Fig 11](plot_a002a2_3_psa_quantile.jpg)
@@ -163,4 +211,5 @@ pander(tab8, justify=c('left', rep('right',6)))
 ![Fig 14](plot_a002a6_3_psa_quantile.jpg)
 # PSA-Wert: Median, 75%- und 90%- Quantil / Patient Alter (at study entry)
 ![Fig 14](plot_a002a7_3_psa_quantile.jpg)
-
+# PSA-Wert:Im Patients
+![Fig 15](plot_psa_id.jpg)
