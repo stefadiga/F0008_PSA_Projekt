@@ -1,16 +1,17 @@
 ---
 title: "Exploratorische Analyse PSA-Screening"
 author: "sd"
-date: "April 2017"
+date: "Mai 2017"
 output:
   word_document:
-    toc: yes
+   # toc: yes
   pdf_document:
     toc: yes
   html_document:
     figure_caption: yes
     toc: yes
     word_document: default
+  fontsize: 10pt  
 ---
 
 
@@ -29,6 +30,7 @@ library(ggplot2)
 # library(pbkrtest)
 # library(sjPlot)
 library(sqldf)
+library(broman) 
 
 ```
 
@@ -51,165 +53,346 @@ pander(count_psa, justify=c('left', 'right'))
 pander(count_psa_2, justify=c('left', 'right'))
 
 ```
+
 # Verteilung wiederholte Messungen / Mixed follow up
 ```{r echo=FALSE, warning=FALSE, message=FALSE}
 # Anzahl Zeilen und Werte
 pander(count_psa_3, justify=c('left', 'right'))
 
 ```
-# Inzidenzrate (PSA-Messung/1 py) über alles
+
+# PSA-Wert: Quantile (Log PSA)
+![Fig 1.a](a00xa0_3_1_3_psa_quantile.jpg)
+
+# PSA-Wert: Histogram (Log PSA)
+![Fig 1.b](a00xa0_log_psa_hist.jpg)
+
+#PSA-Wert: Box plot Im trimester (Log PSA)
+![Fig 1.c](a00xa0_3_1_5_psa_quantile.jpg)
+
+# PSA-Wert:Im Patients
+![Fig 1.d](plot_psa_id.jpg)
+
+# Inzidenzrate (PSA-Messung/1 py) über alles - p-values for Comparison of Poisson rates are shown. Observed incidence rate is compared respectively with Study period and Mixed follow-up
+
 ```{r echo=FALSE, warning=FALSE, message=FALSE}
 # Anzahl Zeilen und Werte
-pander(tab1, justify=c('left', rep('right',5)))
+pander(tab1, justify=c('left', rep('right',7)))
 
 ```
 
 
 # Inzidenzrate (PSA-Messung/1 py)  über alles (Eligibility >= 3 months)
-![Fig 3](plot_a00xa1_ir.jpg)
+![Fig 1.e](plot_a00xa1_ir.jpg)
 
+# Cumulative of patients which enter into the study 
+
+![Fig 1.f](plot_a00xa1cum_ir.jpg)
+
+# Inzidenzrate (PSA-Messung/1 py) über alles (comparison of ir over periods with GLM - reference is the first period - Rate ratio the first period over the others Results are significative but there is a "bias" because of study entry and simulation)
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+# Anzahl Zeilen und Werte
+pander(tab1.b, justify=c('left', rep('right',6)))
+
+```
+
+# Inzidenzrate Arzt/Ärztin - Comparison of Poisson rates (Poisson test - Doctor's sex f vs m)
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+# Anzahl Zeilen und Werte
+pander(tab2, justify=c('left', rep('right',8)))
+
+```
 
 # Inzidenzrate Arzt/Ärztin
+![Fig 2.a](plot_a00xa2_ir.jpg)
+
+# Inzidenzrate Ärztin (comparison of ir over periods is significative but "biased" because of study entry and simulation)
 ```{r echo=FALSE, warning=FALSE, message=FALSE}
 # Anzahl Zeilen und Werte
-pander(tab2, justify=c('left', rep('right',6)))
+pander(tab2.b, justify=c('left', rep('right',6)))
 
 ```
+# Inzidenzrate Ärztin (interation with time) : time1 is the period [01/05/14, 31/12/16] compared with the reference [01/01/09, 01/05/14). Estimate are in log scale 
 ```{r echo=FALSE, warning=FALSE, message=FALSE}
-poisson.test(tab2$n_psa,tab2$py)
+c<-cbind(" "=c("Intercept","sex m","sex f:time1", "sex m:time1"), summary(glm(events~sex+sex:factor(c_dt),offset=log(py),data=inc_arzt_sex,family="poisson"))$coefficients[, 1:3], p_value=lapply(summary(glm(events~sex+sex:factor(c_dt),offset=log(py),data=inc_arzt_sex,family="poisson"))$coefficients[, 4], format_pval))
+
+row.names(c) <-NULL
+
+pander(c, justify=c('left',rep('right',4)))
+
 
 ```
-# Inzidenzrate Arzt/Ärztin
-![Fig 4](plot_a00xa2_ir.jpg)
+#PSA-Wert: Plot (Log PSA) + LOESS smooth with CI-band: Arzt/Ärztin
+![Fig 2.b](a00xa0_3_1_6_psa_quantile.jpg)
 
-# Inzidenzrate Gemeindetypologie
+# Inzidenzrate Gemeindetypologie (Other=RE, MIX, AGR) - Comparison of Poisson rates (GLM Poisson Model- Region reference group = CEN vs PERI and SUB 
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+pander(subset(tab3), justify=c('left', rep('right',8)))
+
+```
+# Inzidenzrate Gemeindetypologie (interaction with time): time1 is the period [01/05/14, 31/12/16] compared with the reference [01/01/09, 01/05/14). Estimate are in log scale
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+c<-cbind(" "=c("Intercept","SUB","PERI", "CEN:time1", "SUB:time1", "PERI:time1"), summary(glm(events~region+region:factor(c_dt),offset=log(py),data=inc_arzt_reg_g,family="poisson"))$coefficients[, 1:3], p_value=lapply(summary(glm(events~region+region:factor(c_dt),offset=log(py),data=inc_arzt_reg_g,family="poisson"))$coefficients[, 4], format_pval))
+
+row.names(c) <-NULL
+
+pander(c, justify=c('left',rep('right',4)))
+
+```
+
+# Inzidenzrate Gemeindetypologie 
+![Fig 3.a](plot_a00xa3_ir.jpg)
+
+
+# PSA-Wert: Plot (Log PSA) + LOESS smooth with CI-band: Region
+![Fig 3.b](plot_a002a3_3_psa_quantile.jpg)
+
+
+# Inzidenzrate Praxisart (poisson rate Einzelpraxis vs Gruppenpraxis + Doppelpraxis)
 ```{r echo=FALSE, warning=FALSE, message=FALSE}
 # Anzahl Zeilen und Werte
-pander(subset(tab3), justify=c('left', rep('right',6)))
+pander(tab4, justify=c('left', rep('right',8)))
 
 ```
+
+# Einzelpraxis vs Gruppenpraxis + Doppelpraxis and interaction with time: time1 is the period [01/05/14, 31/12/16] compared with the reference [01/01/09, 01/05/14). Estimate are in log scale
 ```{r echo=FALSE, warning=FALSE, message=FALSE}
-poisson.test(c(tab3$n_psa[1], tab3$n_psa[3]),c(tab3$py[1], tab3$py[3]))
-poisson.test(c(tab3$n_psa[1], tab3$n_psa[4]),c(tab3$py[1], tab3$py[4]))
-poisson.test(c(tab3$n_psa[4], tab3$n_psa[3]),c(tab3$py[4], tab3$py[3]))
+c<-cbind(" "=c("Intercept","Gruppen/Doppel","Einzel:time1","Gruppen/Doppel:time1"), summary(glm(events~type+type:factor(c_dt),offset=log(py),data=inc_arzt_prac_g,family="poisson"))$coefficients[, 1:3], p_value=lapply(summary(glm(events~type+type:factor(c_dt),offset=log(py),data=inc_arzt_prac_g,family="poisson"))$coefficients[, 4], format_pval))
+row.names(c) <-NULL
+
+pander(c, justify=c('left',rep('right',4)))
 
 ```
-# Inzidenzrate Gemeindetypologie (Other=RE, MIX, AGR)
-![Fig 5](plot_a00xa3_ir.jpg)
 
 # Inzidenzrate Praxisart
+![Fig 4.a](plot_a00xa4_ir.jpg)
+
+#PSA-Wert: Plot (Log PSA) + LOESS smooth with CI-band / Praxis
+![Fig 4.b](plot_a002a4_3_psa_quantile.jpg)
+
+# Inzidenzrate Angestelltenverhältnis - Poisson test Angestellt vs Selbständig
 ```{r echo=FALSE, warning=FALSE, message=FALSE}
 # Anzahl Zeilen und Werte
-pander(tab4, justify=c('left', rep('right',6)))
+pander(tab5, justify=c('left', rep('right',8)))
 
 ```
-```{r echo=FALSE, warning=FALSE, message=FALSE}
-poisson.test(c(tab4$n_psa[1], tab4$n_psa[2]+tab4$n_psa[3]),c(tab4$py[1], tab4$py[2]+tab4$py[3]))
-
-```
-
-# Inzidenzrate Praxisart
-![Fig 6](plot_a00xa4_ir.jpg)
-
-
-# Inzidenzrate Angestelltenverhältnis
-```{r echo=FALSE, warning=FALSE, message=FALSE}
-# Anzahl Zeilen und Werte
-pander(tab5, justify=c('left', rep('right',6)))
-
-```
+# Poisson test Angestellt vs Selbständig and interaction with time: time1 is the period [01/05/14, 31/12/16] compared with the reference [01/01/09, 01/05/14). Estimate are in log scale
 
 ```{r echo=FALSE, warning=FALSE, message=FALSE}
-poisson.test(c(tab5$n_psa[1], tab5$n_psa[2]),c(tab5$py[1], tab5$py[2]))
+c<-cbind(" "=c("Intercept", "Selbständig", "Angestellt:time1", "Selbst:time1"), summary(glm(events~employ+employ:factor(c_dt),offset=log(py),data=inc_arzt_emp_g,family="poisson"))$coefficients[, 1:3], p_value=lapply(summary(glm(events~employ+employ:factor(c_dt),offset=log(py),data=inc_arzt_emp_g,family="poisson"))$coefficients[, 4], format_pval))
+row.names(c) <-NULL
+
+pander(c, justify=c('left',rep('right',4)))
+
 ```
 
 # Inzidenzrate Angestelltenverhältnis
-![Fig 7](plot_a00xa5_ir.jpg)
+![Fig 5.a](plot_a00xa5_ir.jpg)
+
+# Inzidenzrate Jahrgang Arzt - Comparison of Poisson rates (GLM Poisson Model- Age reference group = [1940,1960) vs [1960,1970) and [1970,1980)
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+# Anzahl Zeilen und Werte
+pander(tab6, justify=c('left', rep('right',8)))
+
+```
+# Comparison of Poisson rates (GLM Poisson Model- Age reference group = [1940,1960) vs [1960,1970) and [1970,1980) and interaction with time: time1 is the period [01/05/14, 31/12/16] compared with the reference [01/01/09, 01/05/14). Estimate are in log scale
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+c<-cbind(" "=c("Intercept", "[1960, 1970)","[1970,1990)", "[1940,1960):time1", "[1960,1970):time1", "[1970,1990):time1"),  summary(glm(events~doby+doby:factor(c_dt),offset=log(py),data=inc_arzt_doby_g,family="poisson"))$coefficients[, 1:3], p_value=lapply(summary(glm(events~doby+doby:factor(c_dt),offset=log(py),data=inc_arzt_doby_g,family="poisson"))$coefficients[, 4], format_pval))
+row.names(c) <-NULL
+
+pander(c, justify=c('left',rep('right',4)))
+
+```
+
+# PSA-Wert: Plot (Log PSA) + LOESS smooth with CI-band / Arbeitsverhältnis
+![Fig 5.b](plot_a002a5_3_psa_quantile.jpg)
+
 
 # Inzidenzrate Jahrgang Arzt
-```{r echo=FALSE, warning=FALSE, message=FALSE}
-# Anzahl Zeilen und Werte
-pander(tab6, justify=c('left', rep('right',6)))
+![Fig 6.a](plot_a00xa6_ir.jpg)
 
-```
-```{r echo=FALSE, warning=FALSE, message=FALSE}
-poisson.test(c(tab6$n_psa[1]+tab6$n_psa[2], tab6$n_psa[3]),c(tab6$py[1]+tab6$py[2], tab6$py[3]))
-poisson.test(c(tab6$n_psa[3], tab6$n_psa[4]+tab6$n_psa[5]),c(tab6$py[3], tab6$py[4]+tab6$py[5]))
-poisson.test(c(tab6$n_psa[1]+tab6$n_psa[2], tab6$n_psa[4]+tab6$n_psa[5]),c(tab6$py[1]+tab6$py[2], tab6$py[4]+tab6$py[5]))
-```
-
-# Inzidenzrate Jahrgang Arzt
-![Fig 8](plot_a00xa6_ir.jpg)
-
-# Inzidenzrate Alter Patient (age at study entry)
+# Inzidenzrate Alter Patient (age at study entry) - Comparison of Poisson rates (GLM Poisson Model- Age (at study entry) reference group = [55,60) vs other
 
 ```{r echo=FALSE, warning=FALSE, message=FALSE}
 # Anzahl Zeilen und Werte
-pander(tab7, justify=c('left', rep('right',6)))
+pander(tab7, justify=c('left', rep('right',8)))
 
 ```
-```{r echo=FALSE, warning=FALSE, message=FALSE}
-# Anzahl Zeilen und Werte
-summary(pois.b<-glm(events.2~age,offset=log(py.2),data=inc_pat_age,family="poisson"))
-
-
-```
-# Inzidenzrate Alter Patient (age during study)
+# Comparison of Poisson rates (GLM Poisson Model- Age (at study entry) reference group = [55,60) vs other and interactions with time: time1 is the period [01/05/14, 31/12/16] compared with the reference [01/01/09, 01/05/14). Estimate are in log scale 
 
 ```{r echo=FALSE, warning=FALSE, message=FALSE}
 # Anzahl Zeilen und Werte
-pander(tab8, justify=c('left', rep('right',6)))
+c<-cbind(" "=c("Intercept", "[60,65)", "[65, 70)", "[70, 75)", "[75+)", "[55,60):time1", "[60,65):time1", "[65,70):time1", "[70,75):time1", "[75+):time1"),  summary(glm(events.2~age+age:factor(c_dt),offset=log(py.2),data=inc_pat_age,family="poisson"))$coefficients[, 1:3], p_value=lapply(summary(glm(events.2~age+age:factor(c_dt),offset=log(py.2),data=inc_pat_age,family="poisson"))$coefficients[, 4], format_pval))
+row.names(c) <-NULL
+
+pander(c, justify=c('left',rep('right',4)))
 
 ```
 
-```{r echo=FALSE, warning=FALSE, message=FALSE}
-# Anzahl Zeilen und Werte
-summary(pois.b<-glm(events~class_age,offset=log(py),data=inc_pat_age_c,family="poisson"))
-
-```
+# PSA-Wert: Plot (Log PSA) + LOESS smooth with CI-band / Arzt Alter
+![Fig 6.b](plot_a002a6_3_psa_quantile.jpg)
 
 # Inzidenzrate Alter Patient (at study entry)
-![Fig 9.a](plot_a00xa7.0_ir.jpg)
+![Fig 7.a](plot_a00xa7.0_ir.jpg)
 
-# Inzidenzrate Alter Patient
-![Fig 9.b](plot_a00xa7_ir.jpg)
+# PSA-Wert: Plot (Log PSA) + LOESS smooth with CI-band / Patient Alter (at study entry)
+![Fig 7.b](plot_a002a7_3_psa_quantile.jpg)
+
+# Inzidenzrate Alter Patient (age during study) -  Comparison of Poisson rates (GLM Poisson Model- Age (during study) reference group = [55,60) vs other 
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+# Anzahl Zeilen und Werte
+pander(tab8, justify=c('left', rep('right',8)))
+
+```
+# Comparison of Poisson rates (GLM Poisson Model- Age (during study) reference group = [55,60) vs other and interactions with time: time1 is the period [01/05/14, 31/12/16] compared with the reference [01/01/09, 01/05/14). Estimate are in log scale 
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+# Anzahl Zeilen und Werte
+c<-cbind(" "=c("Intercept", "[60,65)", "[65, 70)", "[70, 75)", "[75+)", "[55,60):time1", "[60,65):time1", "[65,70):time1", "[70,75):time1", "[75+):time1"), summary(glm(events~class_age+class_age:factor(c_dt),offset=log(py),data=inc_pat_age_c,family="poisson"))$coefficients[, 1:3], p_value=lapply(summary(glm(events~class_age+class_age:factor(c_dt),offset=log(py),data=inc_pat_age_c,family="poisson"))$coefficients[, 4], format_pval))
+row.names(c) <-NULL
+
+pander(c, justify=c('left',rep('right',4)))
+
+```
 
 
-# PSA-Wert: Median, 75%- und 90%- Quantil 
-![Fig 10](a00xa0_3_1_psa_quantile.jpg)
+
+# Inzidenzrate Alter Patient (age during study)
+![Fig 8.a](plot_a00xa7_ir.jpg)
+
+# Inzidenzrate Screening doctor rate (n.PSA per year of follow up) - High >= 10 - Poisson test Screening doctor rate (l vs h)
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+# Anzahl Zeilen und Werte
+pander(tab9, justify=c('left', rep('right',8)))
+
+```
+
+# GLM Screening doctor rate (l vs h) with interaction with time: time1 is the period [01/05/14, 31/12/16] compared with the reference [01/01/09, 01/05/14). Estimate are in log scale
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+
+c<-cbind(" "= c("Intercept", "high", "low:time1", "high:time1"), summary(glm(events~freq+freq:factor(c_dt),offset=log(py),data=inc_arzt_high, family="poisson"))$coefficients[, 1:3], p_value=lapply(summary(glm(events~freq+freq:factor(c_dt),offset=log(py),data=inc_arzt_high,family="poisson"))$coefficients[, 4], format_pval))
+row.names(c) <-NULL
+
+pander(c, justify=c('left',rep('right',4)))
+
+```
+
+# Inzidenzrate screening doctor rate
+
+![Fig 9.a](plot_a00xa8_ir.jpg)
+
+
+# PSA-Wert: Plot (Log PSA) + LOESS smooth with CI-band / Arzt screening rate
+![Fig 9.b](plot_a002a8_3_psa_log.jpg)
+
+
+# Inzidenzrate Patient konsultation rate: high rate patient = number of konsultation >= 10 per year of follow up
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+# Anzahl Zeilen und Werte
+pander(tab10, justify=c('left', rep('right',8)))
+
+```
+
+# GLM Screening patient konsultation rate (l vs h) with interaction with time: time1 is the period [01/05/14, 31/12/16] compared with the reference [01/01/09, 01/05/14). Estimate are in log scale
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+
+c<-cbind(" "= c("Intercept", "high", "low:time1", "high:time1"), summary(glm(events~freq+freq:factor(c_dt),offset=log(py),data=inc_paz_high, family="poisson"))$coefficients[, 1:3], p_value=lapply(summary(glm(events~freq+freq:factor(c_dt),offset=log(py),data=inc_paz_high,family="poisson"))$coefficients[, 4], format_pval))
+row.names(c) <-NULL
+
+pander(c, justify=c('left',rep('right',4)))
+
+```
+# Inzidenzrate Patient konsultation rate 
+![Fig 10.a](plot_a00xa9_ir.jpg)
+
+# Inzidenzrate Patient screening rate (n.PSA / n. Konsultation) high>=0.1
+# PSA-Wert: Plot (Log PSA) + LOESS smooth with CI-band / Patient konsultation rate
+![Fig 10.b](plot_a002a9_3_psa_log.jpg)
+
+
+# Inzidenzrate Patient screening rate - High rate patient = number of PSA / n.Konsultation >=0.1
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+# Anzahl Zeilen und Werte
+pander(tab11, justify=c('left', rep('right',8)))
+
+```
+
+# GLM Screening patient rate (l vs h) with interaction with time: time1 is the period [01/05/14, 31/12/16] compared with the reference [01/01/09, 01/05/14). Estimate are in log scale
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+
+c<-cbind(" "= c("Intercept", "high", "low:time1", "high:time1"), summary(glm(events~freq+freq:factor(c_dt),offset=log(py),data=inc_paz1_high, family="poisson"))$coefficients[, 1:3], p_value=lapply(summary(glm(events~freq+freq:factor(c_dt),offset=log(py),data=inc_paz1_high,family="poisson"))$coefficients[, 4], format_pval))
+row.names(c) <-NULL
+
+pander(c, justify=c('left',rep('right',4)))
+
+
+```
+# Inzidenzrate Patient screening rate 
+![Fig 11.a](plot_a00xa9.2_ir.jpg)
+
+# Inzidenzrate Chronic diseases
+# PSA-Wert: Plot (Log PSA) + LOESS smooth with CI-band / Patient screening rate
+![Fig 11.b](plot_a002a10_3_psa_log.jpg)
+
+# Inzidenzrate Chronic Diseases (intervals of number of chronic diseases during the study)
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+# Anzahl Zeilen und Werte
+pander(tab12, justify=c('left', rep('right',8)))
+
+```
+
+# GLM Poisson Model- Chronic diseases and interactions with time: time1 is the period [01/05/14, 31/12/16] compared with the reference [01/01/09, 01/05/14). Estimate are in log scale
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+# Anzahl Zeilen und Werte
+c<-cbind(" "= c("Intercept", "[1,3]", "[4,10]", "[11+)", "0 dis:time 1", "[1,3] :time 1", "[4,10] :time 1", "[11+) :time 1"), summary(glm(events~factor(cronic)+factor(cronic):factor(c_dt),offset=log(py),data=subset(inc_pat_cron, py!=0), family="poisson"))$coefficients[, 1:3], p_value=lapply(summary(glm(events~factor(cronic)+factor(cronic):factor(c_dt),offset=log(py),data=subset(inc_pat_cron, py!=0), family="poisson"))$coefficients[, 4], format_pval))
+row.names(c) <-NULL
+
+pander(c, justify=c('left',rep('right',4)))
+
+```
+
+# Inzidenzrate Chronic disease
+![Fig 12.a](plot_a00xa10.0_ir.jpg)
 
 # PSA-Wert: Boxplot Log (PSA)
-![Fig 10.2](a00xa0_3_1_3_psa_quantile.jpg)
-
-# PSA-Wert: Violin plot (Log PSA)
-![Fig 10.3](a00xa0_3_1_4_psa_quantile.jpg)
-
-#PSA-Wert: Box plot Im trimester (Log PSA)
-![Fig 10.4](a00xa0_3_1_5_psa_quantile.jpg)
-
-
-#PSA-Wert: Plot (Log PSA) + smooth
-![Fig 10.5](a00xa0_3_1_6_psa_quantile.jpg)
-
-# PSA-Wert: Median, 75%- und 90%- Quantil / Arzt/Ärztin
-![Fig 11](plot_a002a2_3_psa_quantile.jpg)
+# PSA-Wert: Plot (Log PSA) + LOESS smooth with CI-band / Chronic diseases
+![Fig 12.b](plot_a002a10_4_psa_log.jpg)
 
 
 
-# PSA-Wert: Median, 75%- und 90%- Quantil / Region
-![Fig 12](plot_a002a3_3_psa_quantile.jpg)
 
 
-# PSA-Wert: Median, 75%- und 90%- Quantil / Praxisart
-![Fig 13](plot_a002a4_3_psa_quantile.jpg)
 
 
-# PSA-Wert: Median, 75%- und 90%- Quantil / Arbeitsverhältnis
-![Fig 14](plot_a002a5_3_psa_quantile.jpg)
 
-# PSA-Wert: Median, 75%- und 90%- Quantil / Arzt Alter
-![Fig 14](plot_a002a6_3_psa_quantile.jpg)
-# PSA-Wert: Median, 75%- und 90%- Quantil / Patient Alter (at study entry)
-![Fig 14](plot_a002a7_3_psa_quantile.jpg)
-# PSA-Wert:Im Patients
-![Fig 15](plot_psa_id.jpg)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
