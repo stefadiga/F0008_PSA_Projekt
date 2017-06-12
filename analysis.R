@@ -880,6 +880,8 @@ tab1$p_value<-c("-", format_pval(poisson.test(tab1$psa[1:2], tab1$py[1:2])[3]), 
 
 py_date<-c(sum(inc$py.2 *(inc$c_dt==0)), sum(inc$py.2 *(inc$c_dt==1)), sum(inc$py.2 *(inc$c_dt==2)), sum(inc$py.2 *(inc$c_dt==3)))   
 psa_date<-c(sum(inc$events.2 *(inc$c_dt==0)), sum(inc$events.2 *(inc$c_dt==1)), sum(inc$events.2 *(inc$c_dt==2)), sum(inc$events.2 *(inc$c_dt==3)))   
+tab1$ir_adj<-c("-", "-", format(ageadjust.direct(tab1$psa[3], tab1$py[3], rate = tab8$ir, tapply(mort_2010_m$n.pop_middle, mort_2010_m$c_age, sum, na.rm=TRUE), conf.level = 0.95)[2], digits=4))
+tab1$cint_adj<-c("-", "-", paste("(", format(ageadjust.direct(tab1$psa[3], tab1$py[3], rate = tab8$ir, tapply(mort_2010_m$n.pop_middle, mort_2010_m$c_age, sum, na.rm=TRUE), conf.level = 0.95)[3], digits=4), ",", format(ageadjust.direct(tab1$psa[3], tab1$py[3], rate = tab8$ir, tapply(mort_2010_m$n.pop_middle, mort_2010_m$c_age, sum, na.rm=TRUE), conf.level = 0.95)[4], digits=4), ")", sep=""))
 
 #incidence overall by time
 tab1.b<-data.frame(Follow_up=c("Mixed", "Mixed", "Mixed", "Mixed"), period=c("[01/01/09, 01/11/11)", "[01/11/11, 01/07/12)", "[01/07/12, 01/05/14)", "[01/05/14, 31/12/16]"), 
@@ -888,6 +890,7 @@ tab1.b$ir<-as.numeric(tab1.b$psa)/as.numeric(tab1.b$py)
 resp1<-summary(pois.b<-glm(events.2~factor(c_dt),offset=log(py.2),data=inc,family="poisson"))
 tab1.b$rate_ratio<-c("-", format(exp(-as.vector(resp1$coefficients[,1][2:4])), digits=4))
 tab1.b$p_value<-c("-", as.character(lapply(as.vector(resp1$coefficients[,4][2:4]), format_pval)))
+tab1.b$cint<-c("-", paste("(", cbind(format(exp(-as.vector(confint(glm(events.2~factor(c_dt),offset=log(py.2),data=inc,family="poisson"))[,2][2:4])), digits=4)), ",", cbind(format(exp(-as.vector(confint(glm(events.2~factor(c_dt),offset=log(py.2),data=inc,family="poisson"))[,1][2:4])), digits=4)), ")", sep=""))
 
 #incidence sex
 tab2<-data.frame(Follow_up=c("Mixed", "Mixed"), arzt_sex=c("f", "m"), n_pat=c(n_distinct(el2$pat_id[el2$arzt_sex=="f"]),n_distinct(el2$pat_id[el2$arzt_sex=="m"])),
@@ -978,6 +981,8 @@ tab7$ir<-as.numeric(tab7$n_psa)/as.numeric(tab7$py)
 resp4<-summary(pois.b<-glm(events.2~age,offset=log(py.2),data=inc_pat_age,family="poisson"))
 tab7$rate_ratio<-c("-", format(exp(-as.vector(resp4$coefficients[,1][2:5])), digits=4))
 tab7$p_value<-c("-", as.character(lapply(as.vector(resp4$coefficients[,4][2:5]), format_pval)))
+tab7$cint<-c("-", paste("(", cbind(format(exp(-as.vector(confint(glm(events.2~age,offset=log(py.2),data=inc_pat_age,family="poisson"))[,2][2:5])), digits=4)), ",", cbind(format(exp(-as.vector(confint(glm(events.2~age,offset=log(py.2),data=inc_pat_age,family="poisson"))[,1][2:5])), digits=4)), ")", sep=""))
+
 cbind(summary(glm(events.2~age+age:factor(c_dt),offset=log(py.2),data=inc_pat_age,family="poisson"))$coefficients[, 1:3], p_value=lapply(summary(glm(events.2~age+age:factor(c_dt),offset=log(py.2),data=inc_pat_age,family="poisson"))$coefficients[, 4], format_pval))
 
 #patient age during the study
@@ -986,9 +991,14 @@ tab8<-data.frame(Follow_up=c("Mixed", "Mixed", "Mixed", "Mixed", "Mixed"), pat_a
                  n_psa=c(sum(inc_pat_age_c$events[inc_pat_age_c$class_age=="[55,60)"]), sum(inc_pat_age_c$events[inc_pat_age_c$class_age=="[60,65)"]), sum(inc_pat_age_c$events[inc_pat_age_c$class_age=="[65,70)"]), sum(inc_pat_age_c$events[inc_pat_age_c$class_age=="[70,75)"]), sum(inc_pat_age_c$events[inc_pat_age_c$class_age=="[75+)"])),
                  py=c(sum(inc_pat_age_c$py[inc_pat_age_c$class_age=="[55,60)"]), sum(inc_pat_age_c$py[inc_pat_age_c$class_age=="[60,65)"]), sum(inc_pat_age_c$py[inc_pat_age_c$class_age=="[65,70)"]), sum(inc_pat_age_c$py[inc_pat_age_c$class_age=="[70,75)"]), sum(inc_pat_age_c$py[inc_pat_age_c$class_age=="[75+)"])))   
 tab8$ir<-as.numeric(tab8$n_psa)/as.numeric(tab8$py)
+tab8$ir_adj<-tab8$ir*wei_ad
 resp5<-summary(pois.b<-glm(events~class_age,offset=log(py),data=inc_pat_age_c,family="poisson"))
 tab8$rate_ratio<-c("-", format(exp(-as.vector(resp5$coefficients[,1][2:5])), digits=4))
 tab8$p_value<-c("-", as.character(lapply(as.vector(resp5$coefficients[,4][2:5]), format_pval)))
+tab8$cint<-c("-", paste("(", cbind(format(exp(-as.vector(confint(glm(events~class_age,offset=log(py),data=inc_pat_age_c,family="poisson"))[,2][2:5])), digits=4)), ",", cbind(format(exp(-as.vector(confint(glm(events~class_age,offset=log(py),data=inc_pat_age_c,family="poisson"))[,1][2:5])), digits=4)), ")", sep=""))
+
+sum(tab8$ir*wei_ad)
+
 cbind(summary(glm(events~class_age+class_age:factor(c_dt),offset=log(py),data=inc_pat_age_c,family="poisson"))$coefficients[, 1:3], p_value=lapply(summary(glm(events~class_age+class_age:factor(c_dt),offset=log(py),data=inc_pat_age_c,family="poisson"))$coefficients[, 4], format_pval))
 
 #Screening doctor rate

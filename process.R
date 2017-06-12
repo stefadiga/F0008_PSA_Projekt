@@ -260,6 +260,11 @@ el2<-subset(data_el, elig_2_3==1)
 el2$c_doby <- cut(el2$arzt_doby, c(1940,1950,1960,1970,1980, 1990), right=FALSE, labels=FALSE)
 el2$c_age <- cut(el2$pat_age_start_3, c(55,60,65,70,75,76), right=FALSE)
 
+#number of people in classe age (general population)
+mort_2010_m$c_age <- cut(mort_2010_m$age_y, c(55,60,65,70,75,76), right=FALSE)
+
+#weight for adjusted
+wei_ad<-tapply(mort_2010_m$n.pop_middle, mort_2010_m$c_age, sum, na.rm=TRUE)/sum(tapply(mort_2010_m$n.pop_middle, mort_2010_m$c_age, sum, na.rm=TRUE))
 
 
 class_age_1 <-  c(55, 56, 60, 61, 65, 66, 70, 71, 75, 76)
@@ -391,6 +396,7 @@ inc_pat_cron$c_dt<-findInterval(as.Date(inc_pat_cron$dt), as.numeric(as.Date("20
 
 count_dis<-data.frame(pat_id=el2$pat_id, arzt_id=el2$arzt_id, psa=el2$psa, data_psa=el2$valid_from_dt, fup_start=el2$fup_start_dt_3, fup_end=el2$fup_end_dt_3, count_cron=cronic_disease_counter[,33])
 count_dis$c_cron <- cut(count_dis$count_cron, c(0,1,4,11,21), right=FALSE)
+count_dis$count_cron_start<-cronic_disease_counter[,5]
 count_dis_psa<-subset(count_dis, !is.na(psa), select=c("pat_id", "count_cron"))
 count_dis_psa<-distinct(count_dis_psa)
 n_psa_id_c<-join(n_psa_id_c, count_dis_psa)
